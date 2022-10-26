@@ -4,6 +4,7 @@
   "description": "Create components and tests simply and intuitively.",
   "version": "0.0.1",
   "publisher": "UismLopes",
+  "icon": "img/logo.png",
   "author": {
     "name": "Uisma Lopes"
   },
@@ -11,6 +12,7 @@
   "engines": {
     "vscode": "^1.72.0"
   },
+  "homepage": "https://github.com/Ploomes/plootools",
   "categories": [
     "Other"
   ],

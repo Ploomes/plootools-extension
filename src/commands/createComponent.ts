@@ -1,4 +1,4 @@
-import { Uri, window, workspace } from "vscode";
+import { Uri, window } from "vscode";
 import * as _path from "path";
 import * as fs from "fs";
 import { config } from "../config";
