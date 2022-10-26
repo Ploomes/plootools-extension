@@ -1,13 +1,25 @@
 {
   "name": "plootools",
-  "displayName": "plootools",
-  "description": "",
+  "displayName": "PlooTools",
+  "description": "Create components and tests simply and intuitively.",
   "version": "0.0.1",
+  "author": {
+    "name": "Uisma Lopes"
+  },
+  "license": "MIT",
   "engines": {
     "vscode": "^1.72.0"
   },
   "categories": [
     "Other"
+  ],
+  "keywords": [
+    "ploomes",
+    "CRM",
+    "react",
+    "jest",
+    "tests",
+    "component"
   ],
   "activationEvents": [
     "onCommand:plootools.menu",
