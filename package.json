@@ -2,12 +2,15 @@
   "name": "plootools",
   "displayName": "PlooTools",
   "description": "Create components and tests simply and intuitively.",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "publisher": "UismLopes",
   "icon": "img/logo.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/Ploomes/plootools.git"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
   },
   "author": {
     "name": "Uisma Lopes"
