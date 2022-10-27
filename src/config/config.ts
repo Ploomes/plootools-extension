@@ -1,6 +1,6 @@
 const config = {
   app: 'plootools',
-  displayName: 'Plootools'
+  displayName: 'PlooTools'
 };
 
 export default config;

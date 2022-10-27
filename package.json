@@ -2,7 +2,7 @@
   "name": "plootools",
   "displayName": "PlooTools",
   "description": "Create components and tests simply and intuitively.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "UismaLopes",
   "icon": "img/logo.png",
   "repository": {
@@ -41,32 +41,32 @@
     "commands": [
       {
         "command": "plootools.menu",
-        "title": "Plootools"
+        "title": "PlooTools"
       },
       {
         "command": "plootools.createComponent",
-        "title": "Plootools create component"
+        "title": "PlooTools create component"
       },
       {
         "command": "plootools.createTests",
-        "title": "Plootools create tests"
+        "title": "PlooTools create tests"
       }
     ],
     "menus": {
       "explorer/context": [
         {
           "group": "plootools",
-          "title": "Plootools",
+          "title": "PlooTools",
           "command": "plootools.menu"
         }
       ]
     }
   },
   "scripts": {
-    "vscode:prepublish": "pnpm run compile",
+    "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "pretest": "pnpm run compile && pnpm run lint",
+    "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js"
   },
@@ -80,8 +80,10 @@
     "@typescript-eslint/parser": "^5.31.0",
     "@vscode/test-electron": "^2.1.5",
     "eslint": "^8.20.0",
+    "fs": "0.0.1-security",
     "glob": "^8.0.3",
     "mocha": "^10.0.0",
+    "path": "^0.12.7",
     "prettier": "^2.7.1",
     "typescript": "^4.7.4"
   }
