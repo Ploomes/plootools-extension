@@ -2,6 +2,8 @@ import { commands, QuickPickItem, window } from "vscode";
 import { config } from "../config";
 import { MENU_OPTIONS } from "../constants";
 import { ICallbackCommand } from "../types";
+import createComponent from "./createComponent";
+import createTests from "./createTests";
 
 async function createMenu(props: ICallbackCommand) {
   const options: (QuickPickItem & { id: number })[] = [
@@ -33,17 +35,14 @@ async function createMenu(props: ICallbackCommand) {
         ]);
 
         if(typeCreation) {
-          commands.executeCommand(`${config.app}.createComponent`, {
-            ...props,
-            action: typeCreation.id
-          });
+          await createComponent({...props, action: typeCreation.id});
         }else {
           window.showErrorMessage(`${config.displayName}: Operation Cancelled`);
         }
 
         break;
       default:
-        commands.executeCommand(`${config.app}.createTests`, props);
+        await createTests(props);
         break;
     }
   }else {

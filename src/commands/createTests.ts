@@ -6,7 +6,7 @@ import { config } from "../config";
 import { JEST } from "../templates";
 import { buildTemplate, createFile } from "../utils";
 
-function createTests(props: ICallbackCommand) {
+async function createTests(props: ICallbackCommand) {
   const { path, fsPath } = props;
   const currentFolder = _path.resolve(fsPath);
   const regFileExtension = /\.(js|ts)$/g;
