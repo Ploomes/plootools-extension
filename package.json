@@ -5,6 +5,10 @@
   "version": "0.0.1",
   "publisher": "UismLopes",
   "icon": "img/logo.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ploomes/plootools.git"
+  },
   "author": {
     "name": "Uisma Lopes"
   },
