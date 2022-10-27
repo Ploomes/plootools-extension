@@ -2,8 +2,8 @@
   "name": "plootools",
   "displayName": "PlooTools",
   "description": "Create components and tests simply and intuitively.",
-  "version": "0.0.1",
-  "publisher": "UismLopes",
+  "version": "0.0.2",
+  "publisher": "UismaLopes",
   "icon": "img/logo.png",
   "repository": {
     "type": "git",
@@ -68,9 +68,7 @@
     "watch": "tsc -watch -p ./",
     "pretest": "pnpm run compile && pnpm run lint",
     "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js",
-    "package": "pnpm vsce package --no-dependencies",
-    "publish": "pnpm vsce publish --no-dependencies"
+    "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
     "@types/glob": "^7.2.0",
