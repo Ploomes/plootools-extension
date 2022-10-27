@@ -82,10 +82,11 @@ async function createComponent(props: ICallbackCommand) {
     });
   }else {
     const folderName = _path.basename(_path.resolve(props.path));
-    window.showErrorMessage(folderName);
     createFilesAndFolder({
       ...props,
       folderName
+    }).then(()=>{
+      window.showInformationMessage(`${config.displayName}: Files created successfully!`);
     });
   }
 };
