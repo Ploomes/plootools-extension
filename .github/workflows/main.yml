@@ -20,5 +20,5 @@ jobs:
           npm install
           npm install -g vsce
       - name: Vscode publish
-        run: |
-          vsce publish minor -p ${{ secrets.VSCE_PAT }}
+        uses: JCofman/vscodeaction@master
+        run: vsce publish minor -p ${{ secrets.VSCE_PAT }}
