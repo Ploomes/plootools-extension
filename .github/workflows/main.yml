@@ -17,10 +17,6 @@ jobs:
           node-version: 16
       - name: Install dependencies
         run: npm install
-      - name: package with vsce
-        run: |
-          npm install -g vsce
-          vsce package
-      - name: Vscode release plugin
+      - name: Vscode publish
         run: |
           vsce publish -p ${{ secrets.VSCE_PAT }} minor
