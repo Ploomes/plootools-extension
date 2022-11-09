@@ -1,8 +1,12 @@
 const JEST = {
   extension: 'js',
-  content: `describe("@fileName@ tests", ()=>{
+  content: `import @fileName@ from "./@fileName@";
+
+  describe("@fileName@ tests", ()=>{
     test("your tests", ()=>{});
-  })`
+    test("Wrong types", ()=>{});
+  });
+  `
 };
 
 export default JEST;
