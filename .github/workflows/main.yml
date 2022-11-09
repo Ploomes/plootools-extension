@@ -21,4 +21,4 @@ jobs:
           npm install -g vsce
       - name: Vscode publish
         run: |
-          vsce publish -p ${{ secrets.VSCE_PAT }} minor
+          vsce publish minor -p ${{ secrets.VSCE_PAT }}
