@@ -23,4 +23,4 @@ jobs:
           vsce package
       - name: Vscode release plugin
         run: |
-          vsce publish -p ${{ secrets.VSCE_PAT }}
+          vsce publish -p ${{ secrets.VSCE_PAT }} minor
