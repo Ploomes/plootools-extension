@@ -9,17 +9,18 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
-
-      - name: npm install
-        run: |
-          npm install
-          npm run vscode:prepublish
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - name: Install dependencies
+        run: npm install
       - name: package with vsce
         run: |
           npm install -g vsce
           vsce package
-      - name: Publish to marketplace
-        if: github.ref == 'refs/heads/pre-release'
+      - name: Vscode release plugin
         run: |
-          vsce publish -p ${{ secrets.VSCE_PAT }} --pre-release
+          vsce publish -p ${{ secrets.VSCE_PAT }}
