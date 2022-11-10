@@ -18,4 +18,6 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Vscode publish
-        run: npx vsce publish -p ${{ secrets.VSCE_PAT }} minor
+        uses: JCofman/vscodeaction@master
+        with:
+          args: publish -p ${{ secrets.VSCE_PAT }} minor

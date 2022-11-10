@@ -2,7 +2,6 @@
   "name": "plootools",
   "displayName": "PlooTools",
   "description": "Create components and tests simply and intuitively.",
-  "version": "0.0.5",
   "publisher": "UismaLopes",
   "icon": "img/logo.png",
   "repository": {
