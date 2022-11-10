@@ -4,10 +4,10 @@ on:
   pull_request:
     branches: [master]
   workflow_dispatch:
-  
-before_deploy:
+
+before_jobs:
   - ./node_modules/.bin/patch-version
-deploy:
+jobs:
   build:
     runs-on: ubuntu-latest
     steps:
