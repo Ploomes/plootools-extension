@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Update package:
+      - name: Update package
         run: git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
         run: git config user.name "$GITHUB_ACTOR"
         run: npm version minor -m "v%s"
