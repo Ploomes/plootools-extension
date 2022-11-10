@@ -20,4 +20,4 @@ jobs:
       - name: Vscode publish
         uses: JCofman/vscodeaction@master
         with:
-          args: publish -p ${{ secrets.VSCE_PAT }} patch
+          args: publish -p ${{ secrets.VSCE_PAT }} major
