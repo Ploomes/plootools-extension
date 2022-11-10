@@ -17,6 +17,8 @@ jobs:
           node-version: 16
       - name: Install dependencies
         run: npm install
+      - name: Release
+        run: npx semantic-release
       - name: Vscode publish
         uses: JCofman/vscodeaction@master
         with:
