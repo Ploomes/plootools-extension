@@ -1,12 +1,12 @@
 name: CI
-before_deploy:
-  - ./node_modules/.bin/patch-version
 on:
   push:
   pull_request:
     branches: [master]
   workflow_dispatch:
-
+  
+before_deploy:
+  - ./node_modules/.bin/patch-version
 deploy:
   build:
     runs-on: ubuntu-latest
