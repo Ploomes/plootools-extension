@@ -20,4 +20,4 @@ jobs:
       - name: Vscode publish
         uses: JCofman/vscodeaction@master
         with:
-          args: publish minor -p ${{ secrets.VSCE_PAT }}
+          args: publish -p ${{ secrets.VSCE_PAT }} minor
