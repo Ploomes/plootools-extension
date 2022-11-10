@@ -2,10 +2,10 @@ const REACT = {
   index: {
     name: 'index.ts',
     content: `import @folderName(pascal-case)@ from "./@folderName@.controller";
-    import I@folderName(pascal-case)@Props from "./@folderName@.props";
+    import I@folderName(pascal-case)@ from "./@folderName@.props";
 
     export { @folderName(pascal-case)@ };
-    export type { I@folderName(pascal-case)@Props }`
+    export type { I@folderName(pascal-case)@ }`
   },
   style: {
     name: '@folderName@.style.ts',
@@ -34,9 +34,9 @@ const REACT = {
     name: '@folderName@.controller.tsx',
     content: `import React from "react";
     import @folderName(pascal-case)@View from "./@folderName@.view";
-    import I@folderName(pascal-case)@Props from "./@folderName@.props";
+    import I@folderName(pascal-case)@ from "./@folderName@.props";
 
-    const @folderName(pascal-case)@: React.FC<I@folderName(pascal-case)@Props> = () => {
+    const @folderName(pascal-case)@: React.FC<I@folderName(pascal-case)@> = () => {
       return <@folderName(pascal-case)@View />;
     };
 
@@ -44,9 +44,9 @@ const REACT = {
   },
   props: {
     name: '@folderName@.props.ts',
-    content: `interface I@folderName(pascal-case)@Props {};
+    content: `interface I@folderName(pascal-case)@ {};
 
-    export default I@folderName(pascal-case)@Props;`
+    export default I@folderName(pascal-case)@;`
   }
 };
 

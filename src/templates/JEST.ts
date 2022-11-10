@@ -3,8 +3,9 @@ const JEST = {
   content: `import @fileName@ from "./@fileName@";
 
   describe("@fileName@ tests", ()=>{
-    test("your tests", ()=>{});
-    test("Wrong types", ()=>{});
+    test("Lorem ipsum", ()=>{
+      expect(@fileName@()).toEqual();
+    });
   });
   `
 };
