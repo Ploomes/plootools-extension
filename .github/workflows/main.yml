@@ -1,11 +1,13 @@
 name: CI
+before_deploy:
+  - ./node_modules/.bin/patch-version
 on:
   push:
   pull_request:
     branches: [master]
   workflow_dispatch:
 
-jobs:
+deploy:
   build:
     runs-on: ubuntu-latest
     steps:
@@ -17,8 +19,6 @@ jobs:
           node-version: 16
       - name: Install dependencies
         run: npm install
-      - name: Increment version
-        run: npm version patch
       - name: Vscode publish
         uses: JCofman/vscodeaction@master
         with:
