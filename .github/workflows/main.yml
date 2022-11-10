@@ -13,9 +13,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Update env
-        run: env.CURRENT_VERSION = node -p "require('./package.json').version"
       - name: Update Version
+        run: env.CURRENT_VERSION = node -p "require('./package.json').version"
         uses: christian-draeger/increment-semantic-version@1.0.3
         with:
           current-version: $CURRENT_VERSION
