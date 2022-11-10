@@ -17,7 +17,8 @@ jobs:
           node-version: 16
       - name: Install dependencies
         run: npm install
+      - name: Update Version
       - name: Vscode publish
         uses: JCofman/vscodeaction@master
         with:
-          args: publish -p ${{ secrets.VSCE_PAT }} minor
+          args: publish -p ${{ secrets.VSCE_PAT }} patch
