@@ -2,26 +2,12 @@
   "name": "plootools",
   "displayName": "PlooTools",
   "description": "Create components and tests simply and intuitively.",
+  "version": "0.1.0",
   "publisher": "UismaLopes",
   "icon": "img/logo.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/Ploomes/plootools.git"
-  },
-  "release": {
-    "branches": "master",
-    "verifyConditions": [
-      "@semantic-release/github"
-    ],
-    "publish": [
-      "@semantic-release/github"
-    ],
-    "success": [
-      "@semantic-release/github"
-    ],
-    "fail": [
-      "@semantic-release/github"
-    ]
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
@@ -50,16 +36,20 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
-    "commands": [{
-      "command": "plootools.menu",
-      "title": "PlooTools"
-    }],
+    "commands": [
+      {
+        "command": "plootools.menu",
+        "title": "PlooTools"
+      }
+    ],
     "menus": {
-      "explorer/context": [{
-        "group": "plootools",
-        "title": "PlooTools",
-        "command": "plootools.menu"
-      }]
+      "explorer/context": [
+        {
+          "group": "plootools",
+          "title": "PlooTools",
+          "command": "plootools.menu"
+        }
+      ]
     }
   },
   "scripts": {
