@@ -1,3 +1,13 @@
+const styleContent = `import { styled, css } from "@packages/react-ploomes-design-system";
+
+const @folderName(pascal-case)@Wrapper = styled.div${"`${() => css`"+`
+  &.@folderName@-component{
+  }
+`+"`}`"};
+
+export default @folderName(pascal-case)@Wrapper;
+`;
+
 const REACT = {
   index: {
     name: 'index.ts',
@@ -9,12 +19,7 @@ const REACT = {
   },
   style: {
     name: '@folderName@.style.ts',
-    content: `import { styled, css } from "@packages/react-ploomes-design-system";
-
-    const @folderName(pascal-case)@Wrapper = styled.div${"`${() => css`&.@folderName@-component{}`}`"};
-
-    export default @folderName(pascal-case)@Wrapper;
-    `
+    content: styleContent
   },
   view: {
     name: '@folderName@.view.tsx',
@@ -25,7 +30,7 @@ const REACT = {
 
     const @folderName(pascal-case)@ViewNoMemo: React.FC<IProps> = () => (
       <@folderName(pascal-case)@Wrapper className="@folderName@-component">
-        <h1>Hello World</h1>
+        <h1>@folderName(pascal-case)@</h1>
       </@folderName(pascal-case)@Wrapper>
     );
 

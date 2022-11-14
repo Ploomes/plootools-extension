@@ -1,7 +1,11 @@
 import { MENU_OPTIONS } from "../constants";
 
-export default interface ICallbackCommand {
+interface ICallbackCommand {
   fsPath: string;
   path: string;
-  action?: MENU_OPTIONS
+  action?: MENU_OPTIONS;
+  fileName?: string;
+  extensionName?: string | number;
 }
+
+export default ICallbackCommand;

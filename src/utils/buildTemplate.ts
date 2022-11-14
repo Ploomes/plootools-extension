@@ -5,15 +5,17 @@ interface IProps {
   template: string;
   folderName: string;
   fileName: string;
+  functionName?: string;
 }
 function buildTemplate(props: IProps) {
   const {
     folderName,
     template,
-    fileName
+    fileName,
+    functionName = ''
   } = props;
   const matchTemplateVars = /\@(.*?)\@/g;
-  const replacer = mapVariables(folderName, fileName);
+  const replacer = mapVariables(folderName, fileName, functionName);
   const replacerTemplate = template.replace(matchTemplateVars, replacer);
 
   const prettierTemplate = format(replacerTemplate, {
@@ -25,13 +27,15 @@ function buildTemplate(props: IProps) {
     bracketSpacing: true
   });
 
+  const isStyleFile = fileName.includes('style');
+
   return {
-    template: prettierTemplate,
+    template: isStyleFile ? replacerTemplate : prettierTemplate,
     fileName: fileName.replace(matchTemplateVars, replacer)
   };
 };
 
-function mapVariables(folderName: string, fileName: string) {
+function mapVariables(folderName: string, fileName: string, functionName: string) {
   const vars = new Map();
   const folderNamePascalCase = toPascalCase(folderName);
   const fileNamePascalCase = toPascalCase(fileName);
@@ -41,6 +45,8 @@ function mapVariables(folderName: string, fileName: string) {
 
   vars.set('fileName', fileName);
   vars.set("fileName(pascal-case)", fileNamePascalCase);
+
+  vars.set('functionName', functionName);
 
   return (match: string, offset: string): string => {
     const value = vars.get(offset);

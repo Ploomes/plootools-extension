@@ -1,10 +1,9 @@
 import { Uri, window } from "vscode";
-import * as _path from "path";
-import * as fs from "fs";
-import { config } from "../config";
+import { basename, resolve } from "path";
+import { existsSync } from "fs";
 import { MENU_OPTIONS } from "../constants";
 import { ICallbackCommand } from "../types";
-import { buildTemplate, createDirectory, createFile, toPascalCase } from "../utils";
+import { buildTemplate, createDirectory, createFile, showMessage, toPascalCase } from "../utils";
 import { REACT } from "../templates";
 
 interface ICreateFilesAndFolder extends Pick<ICallbackCommand, 'path' | 'action'> {
@@ -24,14 +23,14 @@ async function createFilesAndFolder(props: ICreateFilesAndFolder) {
     let dir = getPath;
     const pathToCreateFiles = isCreateFilesOnly ? path : `${path}/${folderNamePascalCase}`;
     if(isCreateFilesOnly) {
-      dir = _path.resolve(getPath);
+      dir = resolve(getPath);
     }else {
-      dir = _path.resolve(`${getPath}/${folderNamePascalCase}`);
+      dir = resolve(`${getPath}/${folderNamePascalCase}`);
     }
 
     if(!isCreateFilesOnly) {
-      if(fs.existsSync(dir)) {
-        return window.showErrorMessage(`${config.displayName}: Folder already exists!`);
+      if(existsSync(dir)) {
+        return showMessage.error('Folder already exists!');
       }
       await createDirectory(`${path}/${folderNamePascalCase}`);
     }
@@ -46,7 +45,7 @@ async function createFilesAndFolder(props: ICreateFilesAndFolder) {
         fileName: file.name
       });
 
-      if(!fs.existsSync(_path.resolve(`${dir}/${fileName}`))) {
+      if(!existsSync(resolve(`${dir}/${fileName}`))) {
         await createFile(
           `${pathToCreateFiles}/${fileName}`,
           template
@@ -56,10 +55,10 @@ async function createFilesAndFolder(props: ICreateFilesAndFolder) {
     }
 
     if(isSuccess) {
-      return window.showInformationMessage(`${config.displayName}: Successfully created files!`);
+      return showMessage.info('Successfully created files!');
     }
   } catch {
-    return window.showErrorMessage(`${config.displayName}: The folder and files could not be created!`);
+    return showMessage.error('The folder and files could not be created!');
   }
 }
 
@@ -71,22 +70,22 @@ async function createComponent(props: ICallbackCommand) {
     });
     const regKebabCase = /^([a-z][a-z0-9]*)(-[a-z0-9]+)*$/g;
     if(!folderName) {
-      return window.showErrorMessage(`${config.displayName}: invalid format!`);
+      return showMessage.error('Invalid format!');
     }
     if(!regKebabCase.test(folderName)) {
-      return window.showErrorMessage(`${config.displayName}: invalid format!`);
+      return showMessage.error('Invalid format!');
     }
     createFilesAndFolder({
       ...props,
       folderName
     });
   }else {
-    const folderName = _path.basename(_path.resolve(props.path));
+    const folderName = basename(resolve(props.path));
     createFilesAndFolder({
       ...props,
       folderName
     }).then(()=>{
-      window.showInformationMessage(`${config.displayName}: Files created successfully!`);
+      showMessage.info('Files created successfully!');
     });
   }
 };
