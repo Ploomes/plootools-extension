@@ -1,4 +1,4 @@
-const FUNC = {
+{
   js: {
     content: `
     function @functionName@() {
@@ -21,6 +21,4 @@ const FUNC = {
     export default @functionName@;
     `
   }
-};
-
-export default FUNC;
+}

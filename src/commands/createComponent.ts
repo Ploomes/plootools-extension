@@ -5,15 +5,17 @@ import { MENU_OPTIONS } from "../constants";
 import { ICallbackCommand } from "../types";
 import { buildTemplate, createDirectory, createFile, showMessage, toPascalCase } from "../utils";
 import { REACT } from "../templates";
+import { config } from "../config";
 
-interface ICreateFilesAndFolder extends Pick<ICallbackCommand, 'path' | 'action'> {
+interface ICreateFilesAndFolder extends ICallbackCommand {
   folderName: string;
 }
 async function createFilesAndFolder(props: ICreateFilesAndFolder) {
   const {
     path,
     folderName,
-    action
+    action,
+    context
   } = props;
 
   try {
@@ -35,28 +37,40 @@ async function createFilesAndFolder(props: ICreateFilesAndFolder) {
       await createDirectory(`${path}/${folderNamePascalCase}`);
     }
     
-    let isSuccess = false;
-    for(const keyFile in REACT) {
-      const key = keyFile as keyof typeof REACT;
-      const file = REACT[key];
-      const { fileName, template } = buildTemplate({
+    const stateReact = context?.workspaceState.get(`${config.app}_react`) as string;
+    const reactTemplates = stateReact ? eval(stateReact) : REACT;
+    const promises = [];
+
+    for(const keyFile in reactTemplates) {
+      const key = keyFile as keyof typeof reactTemplates;
+      const file = reactTemplates[key] as { [K in string]: string };
+
+      const optionsTemplate = {
         folderName,
         template: file.content,
         fileName: file.name
-      });
+      };
 
+      if(file.prettier) {
+        optionsTemplate['prettier'] = file.prettier;
+      }
+
+      const { fileName, template } = buildTemplate(optionsTemplate);
       if(!existsSync(resolve(`${dir}/${fileName}`))) {
-        await createFile(
+        const create = createFile(
           `${pathToCreateFiles}/${fileName}`,
           template
         );
-        isSuccess = true;
+        promises.push(create);
       }
     }
 
-    if(isSuccess) {
+    return await Promise.all(promises).then(()=>{
       return showMessage.info('Successfully created files!');
-    }
+    })
+    .catch(()=> {
+      throw new Error();
+    });
   } catch {
     return showMessage.error('The folder and files could not be created!');
   }
@@ -69,10 +83,7 @@ async function createComponent(props: ICallbackCommand) {
       placeHolder: "Ex: name-component",
     });
     const regKebabCase = /^([a-z][a-z0-9]*)(-[a-z0-9]+)*$/g;
-    if(!folderName) {
-      return showMessage.error('Invalid format!');
-    }
-    if(!regKebabCase.test(folderName)) {
+    if(!folderName || !regKebabCase.test(folderName)) {
       return showMessage.error('Invalid format!');
     }
     createFilesAndFolder({
@@ -84,9 +95,7 @@ async function createComponent(props: ICallbackCommand) {
     createFilesAndFolder({
       ...props,
       folderName
-    }).then(()=>{
-      showMessage.info('Files created successfully!');
-    });
+    }).then(()=> showMessage.info('Files created successfully!'));
   }
 };
 

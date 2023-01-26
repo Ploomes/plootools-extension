@@ -5,6 +5,9 @@ import buildTemplate from "./buildTemplate";
 import isValidFileName from "./isValidFileName";
 import createTestFile from "./createTestFile";
 import showMessage from "./showMessage";
+import createFileCustomTemplates from "./createFileCustomTemplates";
+import states from "./states";
+import watcherFiles from "./watcherFiles";
 
 export {
   createDirectory,
@@ -13,5 +16,8 @@ export {
   buildTemplate,
   isValidFileName,
   createTestFile,
-  showMessage
+  showMessage,
+  createFileCustomTemplates,
+  states,
+  watcherFiles
 };

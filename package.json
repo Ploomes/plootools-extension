@@ -32,7 +32,9 @@
     "component"
   ],
   "activationEvents": [
-    "onCommand:plootools.menu"
+    "onCommand:plootools.menu",
+    "onCommand:plootools.init",
+    "workspaceContains:.plootools"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -40,6 +42,10 @@
       {
         "command": "plootools.menu",
         "title": "PlooTools"
+      },
+      {
+        "command": "plootools.init",
+        "title": "PlooTools init"
       }
     ],
     "menus": {
@@ -48,17 +54,23 @@
           "group": "plootools",
           "title": "PlooTools",
           "command": "plootools.menu"
+        },
+        {
+          "group": "plootools",
+          "title": "PlooTools init",
+          "command": "plootools.init"
         }
       ]
     }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
+    "compile": "tsc -p ./ && npm run copy:assets",
+    "watch": "tsc -watch -p ./ && npm run copy:assets",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "copy:assets": "copyfiles -u 1 ./src/assets/**/* ./out"
   },
   "devDependencies": {
     "@types/glob": "^7.2.0",
@@ -69,14 +81,16 @@
     "@typescript-eslint/eslint-plugin": "^5.31.0",
     "@typescript-eslint/parser": "^5.31.0",
     "@vscode/test-electron": "^2.1.5",
+    "copyfiles": "^2.4.1",
     "eslint": "^8.20.0",
     "glob": "^8.0.3",
     "mocha": "^10.0.0",
+    "tsc-alias": "^1.8.2",
     "typescript": "^4.7.4"
   },
   "dependencies": {
+    "fs": "0.0.1-security",
     "path": "^0.12.7",
-    "prettier": "^2.7.1",
-    "fs": "0.0.1-security"
+    "prettier": "^2.7.1"
   }
 }

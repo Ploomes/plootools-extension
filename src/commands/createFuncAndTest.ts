@@ -4,14 +4,17 @@ import { existsSync, readFile, writeFileSync } from "fs";
 import { resolve, basename } from "path";
 import { FUNC } from "../templates";
 import { buildTemplate, createFile, createTestFile, showMessage } from "../utils";
+import { config } from "../config";
+import { format } from "prettier";
 
 async function createFuncAndTest(props: ICallbackCommand){
-  try {
-    const {
-      fileName,
-      extensionName
-    } = props;
+  const {
+    fileName,
+    extensionName,
+    context
+  } = props;
 
+  try {
     if(!fileName || !extensionName) {
       throw new Error();
     }
@@ -23,9 +26,11 @@ async function createFuncAndTest(props: ICallbackCommand){
     if(checkFileExist) {
       return showMessage.error('File already exists!');
     }
-
-    const keyExtension = extensionName as keyof typeof FUNC;
-    const currentTemplate = FUNC[keyExtension];
+    
+    const stateFunc = context?.workspaceState.get(`${config.app}_func`) as string;
+    const func = stateFunc ? eval(stateFunc) : FUNC;
+    const currentTemplate = func[extensionName];
+    const configTemplate = currentTemplate?.config;
     const folderName = basename(path);
 
     const { template } = buildTemplate({
@@ -37,9 +42,21 @@ async function createFuncAndTest(props: ICallbackCommand){
 
     await createFile(`${props.path}/${file}`, template);
 
-    if(existsSync(resolve(path, 'index.ts')) || existsSync(resolve(path, 'index.js'))) {
-      const isTs = existsSync(resolve(path, 'index.ts'));
-      const currentFile = `index.${isTs ? 'ts' : 'js'}`;
+    if(configTemplate) {
+      const { createIndex, templateIndex } = configTemplate;
+      const notExistIndexFile = !existsSync(resolve(path, `index.${extensionName}`));
+      if(createIndex && templateIndex && notExistIndexFile) {
+        const templateIndex = format(configTemplate.templateIndex, {
+          semi: true,
+          trailingComma: "all",
+          tabWidth: 2,
+        });
+        await createFile(`${props.path}/index.${extensionName}`, templateIndex);
+      }
+    }
+
+    if(existsSync(resolve(path, `index.${extensionName}`))) {
+      const currentFile = `index.${extensionName}`;
       readFile(resolve(path, currentFile), 'utf-8', (err, data) => {
         if(err) {
           throw new Error();
@@ -63,6 +80,7 @@ async function createFuncAndTest(props: ICallbackCommand){
 
     showMessage.info('File created successfully!');
     createTestFile({
+      ...props,
       baseUrl: path,
       fileName,
       pathVscode: props.path

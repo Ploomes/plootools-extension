@@ -1,36 +1,42 @@
 import toPascalCase from "./toPascalCase";
-import { format } from "prettier";
+import { format, Options } from "prettier";
 
 interface IProps {
   template: string;
   folderName: string;
   fileName: string;
   functionName?: string;
+  prettier?: {
+    active?: boolean;
+    options?: Options;
+  }
 }
 function buildTemplate(props: IProps) {
   const {
     folderName,
     template,
     fileName,
-    functionName = ''
+    functionName = '',
+    prettier = {
+      active: true,
+      options: {
+        semi: true,
+        trailingComma: "all",
+        tabWidth: 2,
+        singleQuote: true,
+        jsxSingleQuote: true,
+        bracketSpacing: true
+      }
+    }
   } = props;
   const matchTemplateVars = /\@(.*?)\@/g;
   const replacer = mapVariables(folderName, fileName, functionName);
   const replacerTemplate = template.replace(matchTemplateVars, replacer);
 
-  const prettierTemplate = format(replacerTemplate, {
-    semi: true,
-    trailingComma: "all",
-    tabWidth: 2,
-    singleQuote: true,
-    jsxSingleQuote: true,
-    bracketSpacing: true
-  });
-
-  const isStyleFile = fileName.includes('style');
+  const prettierTemplate = format(replacerTemplate, prettier.options);
 
   return {
-    template: isStyleFile ? replacerTemplate : prettierTemplate,
+    template: prettier.active ? prettierTemplate : replacerTemplate,
     fileName: fileName.replace(matchTemplateVars, replacer)
   };
 };
