@@ -1,3 +1,4 @@
+import { ExtensionContext } from "vscode";
 import { MENU_OPTIONS } from "../constants";
 
 interface ICallbackCommand {
@@ -5,7 +6,8 @@ interface ICallbackCommand {
   path: string;
   action?: MENU_OPTIONS;
   fileName?: string;
-  extensionName?: string | number;
+  extensionName?: string;
+  context?: ExtensionContext
 }
 
 export default ICallbackCommand;

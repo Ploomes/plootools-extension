@@ -1,14 +1,4 @@
-const styleContent = `import { styled, css } from "@packages/react-ploomes-design-system";
-
-const @folderName(pascal-case)@Wrapper = styled.div${"`${() => css`"+`
-  &.@folderName@-component{
-  }
-`+"`}`"};
-
-export default @folderName(pascal-case)@Wrapper;
-`;
-
-const REACT = {
+{
   index: {
     name: 'index.ts',
     content: `import @folderName(pascal-case)@ from "./@folderName@.controller";
@@ -19,7 +9,14 @@ const REACT = {
   },
   style: {
     name: '@folderName@.style.ts',
-    content: styleContent,
+    content: `import { styled, css } from "@packages/react-ploomes-design-system";
+
+    const @folderName(pascal-case)@Wrapper = styled.div${"`${() => css`"+`
+      &.@folderName@-component{
+      }
+    `+"`}`"};
+
+    export default @folderName(pascal-case)@Wrapper;`,
     prettier: {
       active: false,
       options: {}
@@ -59,6 +56,4 @@ const REACT = {
 
     export default I@folderName(pascal-case)@;`
   }
-};
-
-export default REACT;
+}

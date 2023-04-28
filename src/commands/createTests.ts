@@ -2,11 +2,14 @@ import { ICallbackCommand } from "../types";
 import { readdir, statSync } from "fs";
 import { resolve } from "path";
 import { createTestFile, showMessage } from "../utils";
+import { Uri } from "vscode";
 
 async function createTests(props: ICallbackCommand) {
-  const { fsPath, path } = props;
-  const currentFolder = resolve(fsPath);
+  let { fsPath, path } = props;
 
+  if(!fsPath) fsPath = Uri.parse(path).fsPath;
+
+  const currentFolder = resolve(fsPath);
   readdir(currentFolder, (err, files) => {
     if(err) {
       return showMessage.error('Files not found!');
@@ -17,9 +20,10 @@ async function createTests(props: ICallbackCommand) {
         const isValidFile = !/\.(test|spec)\.(ts|js)/g.test(file) && !/^index/.test(file);
         if(isFile && isValidFile) {
           createTestFile({
+            ...props,
             baseUrl: fsPath,
             fileName: file,
-            pathVscode: path
+            pathVscode: path,
           });
         }
       } catch (err) {

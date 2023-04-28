@@ -1,4 +1,4 @@
-import { QuickPickItem, window } from "vscode";
+import { ExtensionContext, QuickPickItem, window } from "vscode";
 import { MENU_OPTIONS } from "../constants";
 import { ICallbackCommand } from "../types";
 import { isValidFileName, showMessage } from "../utils";
@@ -6,7 +6,10 @@ import createComponent from "./createComponent";
 import createFuncAndTest from "./createFuncAndTest";
 import createTests from "./createTests";
 
-async function createMenu(props: ICallbackCommand) {
+async function createMenu(this: ExtensionContext, props: ICallbackCommand) {
+  const context = this;
+  if(context) props = {...props, context};
+  
   const options: (QuickPickItem & { id: number | string })[] = [
     {
       label: '$(files) Create React Component',
@@ -41,7 +44,7 @@ async function createMenu(props: ICallbackCommand) {
           ]);
   
           if(typeCreation) {
-            await createComponent({...props, action: typeCreation.id});
+            await createComponent({...props, action: typeCreation.id });
           }else {
             showMessage.error('Operation Cancelled');
           }
@@ -78,7 +81,7 @@ async function createMenu(props: ICallbackCommand) {
           await createFuncAndTest({
             ...props,
             action: action.id, 
-            extensionName: extensionName.id,
+            extensionName: extensionName.id as string,
             fileName: funcName
           });
           break;
