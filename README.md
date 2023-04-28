@@ -1,6 +1,10 @@
 # PlooTools 🛠️
 Extension created to assist front-end development in creating components in react with a code pattern used at Ploomes, and also to create test files in the JEST pattern.
 
+### Modify the structure of how the files will be built (new)
+By right-clicking and starting with Plootools init, we can manipulate how the models will be built in the project.
+![](https://raw.githubusercontent.com/Ploomes/plootools/main/img/example_5.gif)
+
 ## Create React Component
 
 ### ▶️ Create folder and files
