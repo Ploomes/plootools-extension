@@ -25,7 +25,6 @@ jobs:
             echo "tag exists"
           else 
             git tag ${VERSION}
-            git push "https://$GITHUB_ACTOR:${{ secrets.ACCESS_TOKEN }}@github.com/$GITHUB_REPOSITORY.git" --follow-tags
             git push "https://$GITHUB_ACTOR:${{ secrets.ACCESS_TOKEN }}@github.com/$GITHUB_REPOSITORY.git" --tags
           fi
       - name: Install dependencies
