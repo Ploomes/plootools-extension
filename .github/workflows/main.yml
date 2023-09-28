@@ -1,8 +1,8 @@
 name: CI
 on:
-  push:
-    branches:
-      - main
+  pr_commented:
+    name: PR comment
+    if: ${{ github.event.issue.pull_request }}
   workflow_dispatch:
 
 jobs:
