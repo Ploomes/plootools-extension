@@ -10,7 +10,6 @@
 		"rootDir": "src",
 		"strict": true,
 		"baseUrl": "./src",
-		"suppressImplicitAnyIndexErrors": true,
 		"typeRoots": [
 			"node_modules/@types",
 			"@types"
