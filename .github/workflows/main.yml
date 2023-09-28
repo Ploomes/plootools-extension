@@ -6,6 +6,7 @@ on:
       - closed
     branches:
       - main
+      - master
   workflow_dispatch:
 
 jobs:
