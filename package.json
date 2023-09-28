@@ -32,8 +32,6 @@
     "component"
   ],
   "activationEvents": [
-    "onCommand:plootools.menu",
-    "onCommand:plootools.init",
     "workspaceContains:.plootools"
   ],
   "main": "./out/extension.js",
@@ -66,7 +64,7 @@
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./ && npm run copy:assets",
-    "watch": "tsc -watch -p ./ && npm run copy:assets",
+    "watch": "npm run copy:assets && tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",

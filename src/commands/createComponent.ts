@@ -52,6 +52,7 @@ async function createFilesAndFolder(props: ICreateFilesAndFolder) {
       };
 
       if(file.prettier) {
+        // @ts-ignore
         optionsTemplate['prettier'] = file.prettier;
       }
 

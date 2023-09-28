@@ -13,7 +13,7 @@ interface IProps extends ICallbackCommand {
   pathVscode: string;
 }
 
-function createTestFile(props: IProps) {
+async function createTestFile(props: IProps) {
   const {
     baseUrl,
     fileName,
@@ -28,7 +28,8 @@ function createTestFile(props: IProps) {
   const { content, extension } = jest;
 
   if(existsSync(resolve(baseUrl, `${name}.test.${extension}`))) {
-    return showMessage.error(`${name} test already exists`);
+    showMessage.error(`test file with name ${name} already exists`);
+    return Promise.reject(`test file with name ${name} already exists`);
   }
 
   const folderName = basename(baseUrl);
@@ -38,7 +39,7 @@ function createTestFile(props: IProps) {
     template: content
   });
   const fileWithExtension = `${newFileName}.test.${extension}`;
-  createFile(`${pathVscode}/${fileWithExtension}`, template).then(()=>{
+  return createFile(`${pathVscode}/${fileWithExtension}`, template).then(()=>{
     showMessage.info(`Test ${fileWithExtension} created successfully!`);
   });
 }

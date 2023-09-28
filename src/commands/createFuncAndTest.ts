@@ -24,7 +24,7 @@ async function createFuncAndTest(props: ICallbackCommand){
     const checkFileExist = existsSync(resolve(path, file));
 
     if(checkFileExist) {
-      return showMessage.error('File already exists!');
+      return showMessage.error(`File with name ${fileName} already exists!`);
     }
     
     const stateFunc = context?.workspaceState.get(`${config.app}_func`) as string;

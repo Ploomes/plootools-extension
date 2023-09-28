@@ -10,6 +10,7 @@ async function createTests(props: ICallbackCommand) {
   if(!fsPath) fsPath = Uri.parse(path).fsPath;
 
   const currentFolder = resolve(fsPath);
+  const promises: Promise<void>[] = [];
   readdir(currentFolder, (err, files) => {
     if(err) {
       return showMessage.error('Files not found!');
@@ -19,18 +20,19 @@ async function createTests(props: ICallbackCommand) {
       try {
         const isValidFile = !/\.(test|spec)\.(ts|js)/g.test(file) && !/^index/.test(file);
         if(isFile && isValidFile) {
-          createTestFile({
+          promises.push(createTestFile({
             ...props,
             baseUrl: fsPath,
             fileName: file,
             pathVscode: path,
-          });
+          }));
         }
       } catch (err) {
         showMessage.error(`Unable to create a test of the file  ${file}`);
       }
     });
   });
+  return Promise.all(promises);
 };
 
 export default createTests;
