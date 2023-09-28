@@ -21,6 +21,8 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           npm version patch -m "v%s"
           git push origin main --follow-tags --force
+      - name: Output version change
+        run: npm pkg get version
       - name: Install dependencies
         run: npm install
       - name: Vscode publish
