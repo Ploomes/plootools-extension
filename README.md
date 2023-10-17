@@ -20,3 +20,18 @@ When you run the create tests command, the extension has an intelligence not to 
 ## Create function and test files
 When you run the Create function and test command, it will intelligently create a file with the function in typescript or javascript, and it will create a test file if one does not exist.
 ![](https://raw.githubusercontent.com/Ploomes/plootools/main/img/example_4.gif)
+
+
+## Creating structures using snippets
+* Create controller
+  *  ![](https://raw.githubusercontent.com/Ploomes/plootools/main/img/snippet_1.gif)
+* Create Interface
+  * ![](https://raw.githubusercontent.com/Ploomes/plootools/main/img/snippet_2.gif)
+* Create style
+  * ![](https://raw.githubusercontent.com/Ploomes/plootools/main/img/snippet_3.gif)
+* Create view
+  * ![](https://raw.githubusercontent.com/Ploomes/plootools/main/img/snippet_4.gif)
+* Create index: (to use this snnippet you need to write the name of the file and copy it, then delete it and start typing plootools)
+  * ![](https://raw.githubusercontent.com/Ploomes/plootools/main/img/snippet_5.gif)
+* Create test
+  * ![](https://raw.githubusercontent.com/Ploomes/plootools/main/img/snippet_6.gif)

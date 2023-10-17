@@ -1,0 +1,39 @@
+{
+  "Plootools Index": {
+    "scope": "typescript",
+    "prefix": ["plootools index"],
+    "body": [
+      "import ${1:${CLIPBOARD/(^\\w)/${1:/upcase}/g}} from './${2:${CLIPBOARD/(.*)/${1:/downcase}/g}}.controller';",
+      "import I${1} from './${2}.props';",
+      "",
+      "export { ${1} };",
+      "export type { I${1} };"
+    ],
+    "description": "Plootools: Create file of exportation"
+  },
+  "Plootools props": {
+    "scope": "typescript",
+    "prefix": ["plootools props"],
+    "body":[
+      "interface I${1:${TM_FILENAME_BASE/(\\..*)|(-)|(\\w+)/${3:/capitalize}/g}} {};",
+      "",
+      "export default I${1};"
+    ],
+    "description": "Plootools: Create interface file"
+  },
+  "Plootools style": {
+    "scope": "typescript",
+    "prefix": ["plootools style"],
+    "body": [
+      "import { styled, css } from '@packages/react-ploomes-design-system';",
+      "",
+      "const ${1:${TM_FILENAME_BASE/(\\..*)|(-)|(\\w+)/${3:/capitalize}/g}}Wrapper = styled.div`${() => css`",
+      "\t&.${TM_FILENAME_BASE/((?=\\.).*)//g}-component{",
+      "\t}",
+      "`}`;",
+      "",
+      "export default ${1}Wrapper;"
+    ],
+    "description": "Plootools: Create style file"
+  }
+}
