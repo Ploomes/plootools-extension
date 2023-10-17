@@ -1,6 +1,5 @@
 {
   "Plootools test": {
-    "scope": "javascript",
     "prefix": ["Plootools test"],
     "body": [
       "import ${1:${TM_FILENAME_BASE/(\\..*)|(-)|(\\w+)/${3:/capitalize}/g}} from './${2:${TM_FILENAME_BASE/((?=\\.).*)//g}}';",

@@ -1,6 +1,5 @@
 {
   "Plootools Controller": {
-    "scope": "javascriptreact",
     "prefix": ["plootools controller"],
     "body": [
       "import React from 'react'",
