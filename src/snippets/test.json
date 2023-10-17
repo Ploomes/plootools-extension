@@ -1,0 +1,15 @@
+{
+  "Plootools test": {
+    "scope": "javascript",
+    "prefix": ["Plootools test"],
+    "body": [
+      "import ${1:${TM_FILENAME_BASE/(\\..*)|(-)|(\\w+)/${3:/capitalize}/g}} from './${2:${TM_FILENAME_BASE/((?=\\.).*)//g}}';",
+      "",
+      "describe('${1} tests', ()=>{",
+      "\texpect(${1}()).toEqual();",
+      "});",
+      ""
+    ],
+    "description": "Plootools: Create function of test"
+  }
+}

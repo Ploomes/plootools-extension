@@ -1,0 +1,39 @@
+{
+  "Plootools Controller": {
+    "scope": "typescriptreact",
+    "prefix": ["plootools controller"],
+    "body": [
+      "import React from 'react'",
+      "import ${1:${TM_FILENAME_BASE/(\\..*)|(-)|(\\w+)/${3:/capitalize}/g}}View from './${2:${TM_FILENAME_BASE/((?=\\.).*)//g}}.view';",
+      "import I${1} from './${2}.props';",
+      "",
+      "const ${1}: React.FC<I${1}> = () => {",
+      "\treturn <${1}View />;",
+      "};",
+      "",
+      "export default ${1};",
+      ""
+    ],
+    "description": "Plootools: Create simple component in react"
+  },
+  "Plootools View": {
+    "scope": "typescriptreact",
+    "prefix": ["plootools view"],
+    "body": [
+      "import React from 'react'",
+      "import ${1:${TM_FILENAME_BASE/(\\..*)|(-)|(\\w+)/${3:/capitalize}/g}}Wrapper from './${2:${TM_FILENAME_BASE/((?=\\.).*)//g}}.style';",
+      "",
+      "interface IProps {};",
+      "",
+      "const ${1}ViewNoMemo: React.FC<IProps> = () => (",
+      "\t<${1}Wrapper className='${2}-component'>",
+      "\t\t${1}",
+      "\t</${1}Wrapper>",
+      ");",
+      "",
+      "const ${1}View = React.memo(${1}ViewNoMemo);",
+      "export default ${1}View;"
+    ],
+    "description": "Plootools: Create view component in react"
+  }
+}

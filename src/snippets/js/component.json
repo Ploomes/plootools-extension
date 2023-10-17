@@ -1,0 +1,18 @@
+{
+  "Plootools Controller": {
+    "scope": "javascriptreact",
+    "prefix": ["plootools controller"],
+    "body": [
+      "import React from 'react'",
+      "import ${1:${TM_FILENAME_BASE/(\\..*)|(-)|(\\w+)/${3:/capitalize}/g}}View from './${2:${TM_FILENAME_BASE/((?=\\.).*)//g}}.view';",
+      "",
+      "const ${1} = () => {",
+      "\treturn <${1}View />;",
+      "};",
+      "",
+      "export default ${1};",
+      ""
+    ],
+    "description": "Plootools: Create simple component in react"
+  }
+}
