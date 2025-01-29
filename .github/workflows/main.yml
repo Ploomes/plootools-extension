@@ -11,21 +11,30 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
       - name: Setup Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 16
+          node-version: 18
+
+      - name: Instalar `vsce`
+        run: npm install -g @vscode/vsce
+
       - name: Update Version
         run: |
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
           git config user.name "$GITHUB_ACTOR"
           npm version patch -m "v%s"
           git push origin main --follow-tags --force
+
       - name: Output version change
         run: npm pkg get version
+
       - name: Install dependencies
-        run: npm install
-      - name: Vscode publish
-        uses: JCofman/vscodeaction@master
-        with:
-          args: publish -p ${{ secrets.VSCE_PAT }}
+        run: npm ci
+
+      - name: Packaging the extension
+        run: vsce package
+
+      - name: Publish on the Marketplace
+        run: vsce publish -p ${{ secrets.VSCE_PAT }}
