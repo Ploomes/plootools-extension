@@ -5,6 +5,7 @@ import { isValidFileName, showMessage } from "../utils";
 import createComponent from "./createComponent";
 import createFuncAndTest from "./createFuncAndTest";
 import createTests from "./createTests";
+import createStateManager from "./createStateManager";
 
 async function createMenu(this: ExtensionContext, props: ICallbackCommand) {
   const context = this;
@@ -22,6 +23,10 @@ async function createMenu(this: ExtensionContext, props: ICallbackCommand) {
     {
       label: '$(code) Create function and test',
       id: MENU_OPTIONS.CREATE_FUNC_TEST
+    },
+    {
+      label: '$(circuit-board) Create state manager (Recoil)',
+      id: MENU_OPTIONS.CREATE_STATE
     }
   ]; 
   const action = await window.showQuickPick(options, {
@@ -85,6 +90,23 @@ async function createMenu(this: ExtensionContext, props: ICallbackCommand) {
             fileName: funcName
           });
           break;
+        case MENU_OPTIONS.CREATE_STATE:
+          const typeCreationState = await window.showQuickPick([
+            {
+              label: '$(folder-opened) Folder and Files',
+              id: MENU_OPTIONS.STATE_FOLDER_AND_FILES
+            },
+            {
+              label: '$(files) Files only',
+              id: MENU_OPTIONS.STATE_FOLDER_AND_FILES_ONLY
+            }
+          ]);
+          if(typeCreationState) {
+            await createStateManager({...props, action: typeCreationState.id });
+          }else {
+            showMessage.error('Operation Cancelled');
+          }
+        break;
         default:
           await createTests(props);
           break;

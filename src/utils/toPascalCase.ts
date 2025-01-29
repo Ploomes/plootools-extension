@@ -1,10 +1,7 @@
-function toPascalCase(name: string) {
-  let formatName = name.charAt(0).toUpperCase() + name.slice(1);
-  formatName = formatName.replace(/\-\w/g, (match) => {
-    return match.replace(/\-/g, "").toUpperCase();
-  });
+import { startCase, toLower } from "lodash";
 
-  return formatName;
+function toPascalCase(name: string) {
+  return startCase(toLower(name)).split(/\s/).join('')
 }
 
 export default toPascalCase;

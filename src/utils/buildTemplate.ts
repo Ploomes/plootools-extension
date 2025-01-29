@@ -1,7 +1,8 @@
+import { camelCase } from "lodash";
 import toPascalCase from "./toPascalCase";
 import { format, Options } from "prettier";
 
-interface IProps {
+export interface IBuildTemplate {
   template: string;
   folderName: string;
   fileName: string;
@@ -11,7 +12,8 @@ interface IProps {
     options?: Options;
   }
 }
-function buildTemplate(props: IProps) {
+
+function buildTemplate(props: IBuildTemplate) {
   const {
     folderName,
     template,
@@ -25,10 +27,12 @@ function buildTemplate(props: IProps) {
         tabWidth: 2,
         singleQuote: true,
         jsxSingleQuote: true,
-        bracketSpacing: true
+        bracketSpacing: true,
+        parser: fileName.endsWith('.ts') ? 'babel-ts' : 'babel'
       }
     }
   } = props;
+
   const matchTemplateVars = /\@(.*?)\@/g;
   const replacer = mapVariables(folderName, fileName, functionName);
   const replacerTemplate = template.replace(matchTemplateVars, replacer);
@@ -44,13 +48,18 @@ function buildTemplate(props: IProps) {
 function mapVariables(folderName: string, fileName: string, functionName: string) {
   const vars = new Map();
   const folderNamePascalCase = toPascalCase(folderName);
+  const folderNameCamelCase = camelCase(folderName);
+
+  const fileNameCamelCase = camelCase(fileName);
   const fileNamePascalCase = toPascalCase(fileName);
 
   vars.set('folderName', folderName);
   vars.set("folderName(pascal-case)", folderNamePascalCase);
+  vars.set("folderName(camel-case)", folderNameCamelCase);
 
   vars.set('fileName', fileName);
   vars.set("fileName(pascal-case)", fileNamePascalCase);
+  vars.set("fileName(camel-case)", fileNameCamelCase);
 
   vars.set('functionName', functionName);
 

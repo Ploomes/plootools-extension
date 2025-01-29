@@ -1,0 +1,65 @@
+const STATE = {
+  index: {
+    name: 'index.ts',
+    content: `import use@folderName(pascal-case)@ from "./state";
+    import use@folderName(pascal-case)@Dispatch from "./dispatch";
+    import use@folderName(pascal-case)@State from "./getState";
+
+    export {
+      use@folderName(pascal-case)@,
+      use@folderName(pascal-case)@Dispatch,
+      use@folderName(pascal-case)@State
+    };
+    `
+  },
+  atom: {
+    name: 'atom.ts',
+    content: `
+      import { atom } from 'recoil';
+
+      const @folderName(camel-case)@Atom = atom<any>({
+        key: '@folderName(camel-case)@',
+        default: null,
+      });
+
+      export default @folderName(camel-case)@Atom;
+    `
+  },
+  dispatch: {
+    name: 'dispatch.ts',
+    content: `
+      import { useSetRecoilState } from "recoil";
+      import @folderName(camel-case)@Atom from "./atom";
+
+      const use@folderName(pascal-case)@Dispatch = () => useSetRecoilState(@folderName(camel-case)@Atom);
+      export default use@folderName(pascal-case)@Dispatch;
+    `
+  },
+  getState: {
+    name: 'getState.ts',
+    content: `
+      import { useRecoilCallback } from "recoil";
+      import @folderName(camel-case)@Atom from "./atom";
+
+      const useGet@folderName(pascal-case)@State = () => {
+        return useRecoilCallback(({ snapshot }) => () => {
+          return snapshot.getLoadable(@folderName(camel-case)@Atom).getValue();
+        }, []);
+      }
+
+      export default useGet@folderName(pascal-case)@State;
+    `
+  },
+  state: {
+    name: 'state.ts',
+    content: `
+    import { useRecoilState } from "recoil";
+    import @folderName(camel-case)@Atom from "./atom";
+
+    const use@folderName(pascal-case)@ = () => useRecoilState(@folderName(camel-case)@Atom);
+    export default use@folderName(pascal-case)@;
+    `
+  }
+};
+
+export default STATE;

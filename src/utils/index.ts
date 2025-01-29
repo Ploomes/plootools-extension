@@ -8,6 +8,7 @@ import showMessage from "./showMessage";
 import createFileCustomTemplates from "./createFileCustomTemplates";
 import states from "./states";
 import watcherFiles from "./watcherFiles";
+import createFilesAndFolder from "./createFilesAndFolder";
 
 export {
   createDirectory,
@@ -19,5 +20,6 @@ export {
   showMessage,
   createFileCustomTemplates,
   states,
-  watcherFiles
+  watcherFiles,
+  createFilesAndFolder
 };

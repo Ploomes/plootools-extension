@@ -1,15 +1,16 @@
 import { window } from "vscode";
-import { basename, resolve } from "path";
 import { MENU_OPTIONS } from "../constants";
-import { ICallbackCommand } from "../types";
+import { ICallbackCommand } from "types";
 import { createFilesAndFolder, showMessage } from "../utils";
-import { REACT } from "../templates";
+import { STATE } from "../templates";
+import { basename, resolve } from "path";
 
-async function createComponent(props: ICallbackCommand) {
-  const isCreateFilesOnly = props.action === MENU_OPTIONS.REACT_COMPONENT_FILES_ONLY;
+
+async function createStateManager(props: ICallbackCommand) {
+  const isCreateFilesOnly = props.action === MENU_OPTIONS.STATE_FOLDER_AND_FILES_ONLY;
   let folderName: string;
 
-  if(props.action === MENU_OPTIONS.REACT_COMPONENT_FOLDER_AND_FILES) {
+  if(props.action === MENU_OPTIONS.STATE_FOLDER_AND_FILES) {
     folderName = await window.showInputBox({
       title: "Enter the folder name",
       placeHolder: "Ex: name-component",
@@ -24,12 +25,15 @@ async function createComponent(props: ICallbackCommand) {
   createFilesAndFolder({
     ...props,
     folderName,
-    defaultTemplate: REACT,
+    defaultTemplate: STATE,
     isCreateFilesOnly,
-    keyOnWorkspace: 'react'
+    keyOnWorkspace: 'state',
+    formats: {
+      folderName: 'CAMEL'
+    }
   }).then(()=> {
     if(isCreateFilesOnly) showMessage.info('Files created successfully!')
   });
 };
 
-export default createComponent;
+export default createStateManager;

@@ -21,6 +21,11 @@ When you run the create tests command, the extension has an intelligence not to 
 When you run the Create function and test command, it will intelligently create a file with the function in typescript or javascript, and it will create a test file if one does not exist.
 ![](https://raw.githubusercontent.com/Ploomes/plootools/main/img/example_4.gif)
 
+## Create State Manager (Recoil)
+
+### ▶️ Create folder and files
+  ![](https://raw.githubusercontent.com/Ploomes/plootools/main/img/example_6.gif)
+
 
 ## Creating structures using snippets
 * Create controller

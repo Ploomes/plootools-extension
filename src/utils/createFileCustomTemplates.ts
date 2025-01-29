@@ -24,6 +24,7 @@ async function createFileCustomTemplates(folderName: string){
   const react = getTemplate('react');
   const jest = getTemplate('jest');
   const func = getTemplate('func');
+  const state = getTemplate('state');
 
   mkdirSync(folderName, { recursive: true });
 
@@ -33,6 +34,7 @@ async function createFileCustomTemplates(folderName: string){
         createTemplateFile(folderName, react, 'react'),
         createTemplateFile(folderName, jest, 'jest'),
         createTemplateFile(folderName, func, 'func'),
+        createTemplateFile(folderName, state, 'state'),
       ]
     )
   })

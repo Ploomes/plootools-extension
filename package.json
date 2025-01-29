@@ -91,6 +91,7 @@
   },
   "devDependencies": {
     "@types/glob": "^7.2.0",
+    "@types/lodash": "^4.17.15",
     "@types/mocha": "^9.1.1",
     "@types/node": "16.x",
     "@types/prettier": "^2.7.1",
@@ -106,6 +107,7 @@
   },
   "dependencies": {
     "fs": "0.0.1-security",
+    "lodash": "^4.17.21",
     "path": "^0.12.7",
     "prettier": "^2.7.1"
   }
