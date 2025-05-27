@@ -1,4 +1,5 @@
 name: Deploy Extension in VSCode
+
 on:
   push:
     branches:
@@ -6,9 +7,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  deploy:
     if: contains(github.event.head_commit.message, 'run:publish')
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -17,28 +19,48 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22.14.0
-          cache: 'npm'   # cache para npm
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci       # usa npm clean install
+        run: npm ci
 
-      - name: Instalar `vsce`
+      - name: Install `vsce`
         run: npm i -g @vscode/vsce
 
-      - name: Packaging the extension
-        run: vsce package --no-dependencies
-
-      - name: Publish on the Marketplace
-        run: vsce publish -p ${{ secrets.VSCE_PAT }}
-
-      - name: Bump version (only after success)
-        if: ${{ success() }}
+      - name: Bump version (but don't push yet)
+        id: versioning
         run: |
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
           git config user.name "$GITHUB_ACTOR"
-          npm version patch --message "v%s"
-          git push origin main --follow-tags --force
 
-      - name: Output version change
-        if: ${{ success() }}
-        run: npm pkg get version
+          VERSION=$(npm version patch --message "v%s")
+          TAG="v$VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "TAG=$TAG" >> $GITHUB_ENV
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Package Extension
+        run: vsce package --no-dependencies
+
+      - name: Publish Extension to Marketplace
+        id: publish
+        run: |
+          if vsce publish -p "${{ secrets.VSCE_PAT }}"; then
+            echo "published=true" >> $GITHUB_OUTPUT
+          else
+            echo "Publishing failed"
+            echo "published=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Push version and tags
+        if: steps.publish.outputs.published == 'true'
+        run: git push origin main --follow-tags
+
+      - name: Rollback version and tag (if publish failed)
+        if: failure()
+        run: |
+          echo "Rolling back tag and version"
+          git tag -d ${{ env.TAG }} || true
+          git push origin :refs/tags/${{ env.TAG }} || true
+          git reset --hard HEAD~1
