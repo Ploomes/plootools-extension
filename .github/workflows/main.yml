@@ -1,12 +1,13 @@
 name: Deploy Extension in VSCode
 on:
-  pull_request:
+  push:
     branches:
       - 'main'
   workflow_dispatch:
 
 jobs:
   build:
+    if: contains(github.event.head_commit.message, 'run:publish')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
