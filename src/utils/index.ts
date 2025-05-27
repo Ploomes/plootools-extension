@@ -10,7 +10,7 @@ import states from "./states";
 import watcherFiles from "./watcherFiles";
 import createFilesAndFolder from "./createFilesAndFolder";
 import { showMultiSelectMenu } from "./showMultiSelectMenu";
-import createContentAux from "./createContentAux";
+import createContentAux from "./createContentAux"; 
 
 export {
   createDirectory,
@@ -25,6 +25,6 @@ export {
   watcherFiles,
   createFilesAndFolder,
   showMultiSelectMenu,
-  createContentAux
+  createContentAux,
 };
 
