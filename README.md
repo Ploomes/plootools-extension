@@ -26,6 +26,11 @@ When you run the Create function and test command, it will intelligently create 
 ### ▶️ Create folder and files
   ![](https://raw.githubusercontent.com/Ploomes/plootools/main/img/example_6.gif)
 
+## Create State Manager (Jotai) 🆕
+
+### ▶️ Create folder and files
+  ![](https://raw.githubusercontent.com/Ploomes/plootools/main/img/example_7.gif)
+
 
 ## Creating structures using snippets
 * Create controller
