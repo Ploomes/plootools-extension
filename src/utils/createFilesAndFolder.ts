@@ -94,10 +94,11 @@ async function createFilesAndFolder(props: ICreateFilesAndFolder) {
     return await Promise.all(promises).then(()=>{
       return showMessage.info('Successfully created files!');
     })
-    .catch(()=> {
-      throw new Error();
+    .catch((error)=> {
+      throw new Error(error);
     });
   } catch (error) {
+    console.log(error);
     return showMessage.error('The folder and files could not be created!');
   }
 }

@@ -22,7 +22,7 @@ async function createRecoilStateManager(props: ICallbackCommand) {
   }else {
     folderName = basename(resolve(props.path));
   }
-  createFilesAndFolder({
+  return createFilesAndFolder({
     ...props,
     folderName,
     defaultTemplate: RECOIL_STATE,
