@@ -9,6 +9,8 @@ import createFileCustomTemplates from "./createFileCustomTemplates";
 import states from "./states";
 import watcherFiles from "./watcherFiles";
 import createFilesAndFolder from "./createFilesAndFolder";
+import { showMultiSelectMenu } from "./showMultiSelectMenu";
+import createContentAux from "./createContentAux";
 
 export {
   createDirectory,
@@ -21,5 +23,8 @@ export {
   createFileCustomTemplates,
   states,
   watcherFiles,
-  createFilesAndFolder
+  createFilesAndFolder,
+  showMultiSelectMenu,
+  createContentAux
 };
+

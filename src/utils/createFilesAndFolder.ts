@@ -9,8 +9,6 @@ import { config } from "../config";
 import buildTemplate, { IBuildTemplate } from "./buildTemplate";
 import createFile from "./createFile";
 import camelCase from 'lodash/camelCase';
-import startCase from 'lodash/startCase';
-import toLower from 'lodash/toLower';
 
 type TTypeFormatString = "CAMEL" | "PASCAL";
 
@@ -29,7 +27,6 @@ async function createFilesAndFolder(props: ICreateFilesAndFolder) {
   const {
     path,
     folderName,
-    action,
     context,
     isCreateFilesOnly,
     keyOnWorkspace,
