@@ -1,12 +1,13 @@
 name: Deploy Extension in VSCode
 on:
-  pull_request:
+  push:
     branches:
       - 'main'
   workflow_dispatch:
 
 jobs:
   build:
+    if: contains(github.event.head_commit.message, 'run:publish')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -16,29 +17,28 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22.14.0
-          cache: 'pnpm'
-
-      - name: Install pnpm
-        run: npm install -g pnpm@10.4.1
-
-      - name: Instalar `vsce`
-        run: pnpm add -g @vscode/vsce
-
-      - name: Update Version
-        run: |
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-          git config user.name "$GITHUB_ACTOR"
-          pnpm version patch --message "v%s"
-          git push origin main --follow-tags --force
-
-      - name: Output version change
-        run: pnpm pkg get version
+          cache: 'npm'   # cache para npm
 
       - name: Install dependencies
-        run: pnpm install
+        run: npm ci       # usa npm clean install
+
+      - name: Instalar `vsce`
+        run: npm i -g @vscode/vsce
 
       - name: Packaging the extension
-        run: vsce package
+        run: vsce package --no-dependencies
 
       - name: Publish on the Marketplace
         run: vsce publish -p ${{ secrets.VSCE_PAT }}
+
+      - name: Bump version (only after success)
+        if: ${{ success() }}
+        run: |
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git config user.name "$GITHUB_ACTOR"
+          npm version patch --message "v%s"
+          git push origin main --follow-tags --force
+
+      - name: Output version change
+        if: ${{ success() }}
+        run: npm pkg get version
