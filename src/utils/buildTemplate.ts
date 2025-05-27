@@ -32,7 +32,6 @@ function buildTemplate(props: IBuildTemplate) {
       }
     }
   } = props;
-
   const matchTemplateVars = /\@(.*?)\@/g;
   const replacer = mapVariables(folderName, fileName, functionName);
   const replacerTemplate = template.replace(matchTemplateVars, replacer);

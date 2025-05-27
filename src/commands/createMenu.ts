@@ -1,11 +1,12 @@
 import { ExtensionContext, QuickPickItem, window } from "vscode";
 import { MENU_OPTIONS } from "../constants";
 import { ICallbackCommand } from "../types";
-import { isValidFileName, showMessage } from "../utils";
+import { isValidFileName, showMessage, showMultiSelectMenu } from "../utils";
 import createComponent from "./createComponent";
 import createFuncAndTest from "./createFuncAndTest";
 import createTests from "./createTests";
-import createStateManager from "./createStateManager";
+import createRecoilStateManager from "./createRecoilStateManager";
+import createJotaiStateManager from "./createJotaiStateManager";
 
 async function createMenu(this: ExtensionContext, props: ICallbackCommand) {
   const context = this;
@@ -25,8 +26,12 @@ async function createMenu(this: ExtensionContext, props: ICallbackCommand) {
       id: MENU_OPTIONS.CREATE_FUNC_TEST
     },
     {
+      label: '$(circuit-board) Create state manager (Jotai)',
+      id: MENU_OPTIONS.CREATE_JOTAI_STATE
+    },
+    {
       label: '$(circuit-board) Create state manager (Recoil)',
-      id: MENU_OPTIONS.CREATE_STATE
+      id: MENU_OPTIONS.CREATE_RECOIL_STATE
     }
   ]; 
   const action = await window.showQuickPick(options, {
@@ -90,23 +95,53 @@ async function createMenu(this: ExtensionContext, props: ICallbackCommand) {
             fileName: funcName
           });
           break;
-        case MENU_OPTIONS.CREATE_STATE:
+        case MENU_OPTIONS.CREATE_RECOIL_STATE:
           const typeCreationState = await window.showQuickPick([
             {
               label: '$(folder-opened) Folder and Files',
-              id: MENU_OPTIONS.STATE_FOLDER_AND_FILES
+              id: MENU_OPTIONS.RECOIL_STATE_FOLDER_AND_FILES
             },
             {
               label: '$(files) Files only',
-              id: MENU_OPTIONS.STATE_FOLDER_AND_FILES_ONLY
+              id: MENU_OPTIONS.RECOIL_STATE_FOLDER_AND_FILES_ONLY
             }
           ]);
           if(typeCreationState) {
-            await createStateManager({...props, action: typeCreationState.id });
+            await createRecoilStateManager({...props, action: typeCreationState.id });
           }else {
             showMessage.error('Operation Cancelled');
           }
         break;
+        case MENU_OPTIONS.CREATE_JOTAI_STATE:
+          const typeCreationJotai = await window.showQuickPick([
+            {
+              label: '$(folder-opened) Folder and Files',
+              id: MENU_OPTIONS.JOTAI_STATE_FOLDER_AND_FILES
+            },
+            {
+              label: '$(files) Files only',
+              id: MENU_OPTIONS.JOTAI_STATE_FOLDER_AND_FILES_ONLY
+            }
+          ]);
+          if(typeCreationJotai) {
+             const selectedMultiOptions = await showMultiSelectMenu([
+              {
+                id: MENU_OPTIONS.JOTAI_STATE_WITH_ATOM_FAMILY,
+                label: '$(symbol-structure) Use atomFamily',
+                description: 'Generate a family of atoms',
+              },
+                {
+                id: MENU_OPTIONS.JOTAI_STATE_WITH_RESET,
+                label: '$(history) Resettable (atomWithReset)',
+                description: 'Enable reset behavior with atomWithReset',
+              }
+            ]);
+
+            await createJotaiStateManager({...props, action: typeCreationJotai.id, selectedMultiOptions });
+          }else {
+            showMessage.error('Operation Cancelled');
+          }
+          break;
         default:
           await createTests(props);
           break;

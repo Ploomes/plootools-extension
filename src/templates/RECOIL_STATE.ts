@@ -1,4 +1,4 @@
-const STATE = {
+const RECOIL_STATE = {
   index: {
     name: 'index.ts',
     content: `import use@folderName(pascal-case)@ from "./state";
@@ -62,4 +62,4 @@ const STATE = {
   }
 };
 
-export default STATE;
+export default RECOIL_STATE;

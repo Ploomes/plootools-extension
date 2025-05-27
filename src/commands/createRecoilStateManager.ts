@@ -2,15 +2,15 @@ import { window } from "vscode";
 import { MENU_OPTIONS } from "../constants";
 import { ICallbackCommand } from "types";
 import { createFilesAndFolder, showMessage } from "../utils";
-import { STATE } from "../templates";
+import { RECOIL_STATE } from "../templates";
 import { basename, resolve } from "path";
 
 
-async function createStateManager(props: ICallbackCommand) {
-  const isCreateFilesOnly = props.action === MENU_OPTIONS.STATE_FOLDER_AND_FILES_ONLY;
+async function createRecoilStateManager(props: ICallbackCommand) {
+  const isCreateFilesOnly = props.action === MENU_OPTIONS.RECOIL_STATE_FOLDER_AND_FILES_ONLY;
   let folderName: string;
 
-  if(props.action === MENU_OPTIONS.STATE_FOLDER_AND_FILES) {
+  if(props.action === MENU_OPTIONS.RECOIL_STATE_FOLDER_AND_FILES) {
     folderName = await window.showInputBox({
       title: "Enter the folder name",
       placeHolder: "Ex: name-component",
@@ -25,9 +25,9 @@ async function createStateManager(props: ICallbackCommand) {
   createFilesAndFolder({
     ...props,
     folderName,
-    defaultTemplate: STATE,
+    defaultTemplate: RECOIL_STATE,
     isCreateFilesOnly,
-    keyOnWorkspace: 'state',
+    keyOnWorkspace: 'recoil',
     formats: {
       folderName: 'CAMEL'
     }
@@ -36,4 +36,4 @@ async function createStateManager(props: ICallbackCommand) {
   });
 };
 
-export default createStateManager;
+export default createRecoilStateManager;

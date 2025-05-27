@@ -3,7 +3,8 @@ import createMenu from "./createMenu";
 import createFuncAndTest from "./createFuncAndTest";
 import createTests from "./createTests";
 import init from "./init";
-import createStateManager from "./createStateManager";
+import createRecoilStateManager from "./createRecoilStateManager";
+import createJotaiStateManager from "./createJotaiStateManager";
 
 export {
   init,
@@ -11,5 +12,6 @@ export {
   createComponent,
   createTests,
   createFuncAndTest,
-  createStateManager
+  createRecoilStateManager,
+  createJotaiStateManager
 };
