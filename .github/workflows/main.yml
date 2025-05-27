@@ -1,6 +1,6 @@
 name: Deploy Extension in VSCode
 on:
-  push:
+  pull_request:
     branches:
       - 'main'
   workflow_dispatch:
