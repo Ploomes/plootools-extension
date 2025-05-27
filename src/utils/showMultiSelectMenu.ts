@@ -1,7 +1,6 @@
 import { IMultiSelectMenu } from "types";
 import { window } from "vscode"
 
-
 export async function showMultiSelectMenu(options: IMultiSelectMenu[]) {
   const selected = await window.showQuickPick(options, {
     canPickMany: true,
