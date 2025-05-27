@@ -80,10 +80,10 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "pnpm compile",
-    "compile": "pnpm clean && tsc -p ./ && pnpm copy:files",
-    "watch": "pnpm clean && pnpm copy:files && tsc -watch -p ./",
-    "pretest": "pnpm compile && pnpm lint",
+    "vscode:prepublish": "npm run compile",
+    "compile": "npm run clean && tsc -p ./ && npm run copy:files",
+    "watch": "npm run clean && npm run copy:files && tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",
     "copy:files": "node ./cp.js",
