@@ -1,7 +1,7 @@
 import { INSERT_ICONS } from '../templates';
 import { ICallbackCommand } from '../types';
 import { readdirSync, readFileSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { basename, join } from 'path';
 import { format } from 'prettier';
 import resolve from 'resolve';
 import { window } from 'vscode';
@@ -59,7 +59,8 @@ function insertIcons(props: ICallbackCommand & { iconName: string }) {
       // Ensure the icon module exists
       resolve.sync(importPath, { basedir: path });
     } catch {
-      window.showWarningMessage(`Icon ${iconName} not found in file ${file}`);
+      const fileName = basename(file);
+      window.showWarningMessage(`Icon ${iconName} not found in file ${fileName}`);
       continue; // Skip file if the module doesn't exist
     }
 
