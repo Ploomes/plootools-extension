@@ -1,5 +1,5 @@
 import { ExtensionContext, QuickPickItem, window } from "vscode";
-import { MENU_OPTIONS } from "../constants";
+import { MENU_OPTIONS, MENU_OPTIONS_DISPLAY } from "../constants";
 import { ICallbackCommand } from "../types";
 import { isValidFileName, showMessage, showMultiSelectMenu } from "../utils";
 import createComponent from "./createComponent";
@@ -7,33 +7,13 @@ import createFuncAndTest from "./createFuncAndTest";
 import createTests from "./createTests";
 import createRecoilStateManager from "./createRecoilStateManager";
 import createJotaiStateManager from "./createJotaiStateManager";
+import insertIcons from "./insertIcons";
 
 async function createMenu(this: ExtensionContext, props: ICallbackCommand) {
   const context = this;
   if(context) props = {...props, context};
   
-  const options: (QuickPickItem & { id: number | string })[] = [
-    {
-      label: '$(files) Create React Component',
-      id: MENU_OPTIONS.CREATE_COMPONENT
-    },
-    {
-      label: '$(tools) Create tests',
-      id: MENU_OPTIONS.CREATE_TESTS
-    },
-    {
-      label: '$(code) Create function and test',
-      id: MENU_OPTIONS.CREATE_FUNC_TEST
-    },
-    {
-      label: '$(circuit-board) Create state manager (Jotai)',
-      id: MENU_OPTIONS.CREATE_JOTAI_STATE
-    },
-    {
-      label: '$(circuit-board) Create state manager (Recoil)',
-      id: MENU_OPTIONS.CREATE_RECOIL_STATE
-    }
-  ]; 
+  const options = MENU_OPTIONS_DISPLAY; 
   const action = await window.showQuickPick(options, {
     title: 'Select what you want to do'
   });
@@ -142,9 +122,22 @@ async function createMenu(this: ExtensionContext, props: ICallbackCommand) {
             showMessage.error('Operation Cancelled');
           }
           break;
-        default:
+        case MENU_OPTIONS.INSERT_ICONS:
+          const iconName = await window.showInputBox({
+            title: 'Icon name'
+          });
+          if(!iconName) throw new Error();
+
+          insertIcons({
+            ...props,
+            iconName
+          });
+          break;
+        case MENU_OPTIONS.CREATE_TESTS:
           await createTests(props);
           break;
+        default:
+          throw new Error('Select an option!');
       }
     } catch {
       showMessage.error('Select an option!');

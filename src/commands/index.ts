@@ -5,6 +5,7 @@ import createTests from "./createTests";
 import init from "./init";
 import createRecoilStateManager from "./createRecoilStateManager";
 import createJotaiStateManager from "./createJotaiStateManager";
+import insertIcons from "./insertIcons";
 
 export {
   init,
@@ -13,5 +14,6 @@ export {
   createTests,
   createFuncAndTest,
   createRecoilStateManager,
-  createJotaiStateManager
+  createJotaiStateManager,
+  insertIcons
 };
