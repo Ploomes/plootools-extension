@@ -1,4 +1,4 @@
-import { Uri, workspace } from "vscode";
+import { Uri, workspace } from 'vscode';
 
 function createDirectory(path: string) {
   return workspace.fs.createDirectory(Uri.parse(path));

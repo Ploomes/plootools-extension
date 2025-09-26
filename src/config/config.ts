@@ -1,7 +1,7 @@
 const config = {
   app: 'plootools',
   displayName: 'PlooTools',
-  folderNameSettings: '.plootools'
+  folderNameSettings: '.plootools',
 };
 
 export default config;

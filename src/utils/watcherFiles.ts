@@ -1,32 +1,41 @@
-import { config } from "../config";
-import { readFileSync } from "fs";
-import { resolve } from "path";
-import { ExtensionContext, Uri, workspace } from "vscode";
-import states from "./states";
+import { config } from '../config';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
+import { ExtensionContext, Uri, workspace } from 'vscode';
+import states from './states';
 
-async function saveConfig(e: Uri, stateManager: ReturnType<typeof states>, tag: string) {
+type TStateManager = ReturnType<typeof states>;
+
+async function saveConfig(e: Uri, stateManager: TStateManager, tag: string) {
   const file = e.fsPath;
   const fileData = readFileSync(file, { encoding: 'utf8' });
   return stateManager.update(`${config.app}_${tag}`, fileData);
 }
 
+interface ICreateWatcherProps {
+  baseUrl: string;
+  key: string;
+  stateManager: TStateManager;
+}
+function createWatcher({ baseUrl, key, stateManager }: ICreateWatcherProps) {
+  const watcher = workspace.createFileSystemWatcher(resolve(baseUrl, `${key}.js`));
+
+  watcher.onDidCreate((e) => saveConfig(e, stateManager, key));
+  watcher.onDidChange((e) => saveConfig(e, stateManager, key));
+  watcher.onDidDelete(() => stateManager.update(`${config.app}_${key}`, undefined));
+}
+
 function watcherFiles(baseUrl: string, context: ExtensionContext) {
-  const watcherReact = workspace.createFileSystemWatcher(resolve(baseUrl, 'react.js'));
-  const watcherJest = workspace.createFileSystemWatcher(resolve(baseUrl, 'jest.js'));
-  const watcherFunc = workspace.createFileSystemWatcher(resolve(baseUrl, 'func.js'));
   const stateManager = states(context);
+  const watcherKeys = ['react', 'jest', 'func', 'jotai', 'recoil'];
 
-  watcherReact.onDidCreate((e)=> saveConfig(e, stateManager, 'react'));
-  watcherReact.onDidChange((e)=> saveConfig(e, stateManager, 'react'));
-  watcherReact.onDidDelete(()=> stateManager.update(`${config.app}_react`, undefined));
-
-  watcherJest.onDidCreate((e)=> saveConfig(e, stateManager, 'jest'));
-  watcherJest.onDidChange((e)=> saveConfig(e, stateManager, 'jest'));
-  watcherJest.onDidDelete(()=> stateManager.update(`${config.app}_jest`, undefined));
-
-  watcherFunc.onDidCreate((e)=> saveConfig(e, stateManager, 'func'));
-  watcherFunc.onDidChange((e)=> saveConfig(e, stateManager, 'func'));
-  watcherFunc.onDidDelete(()=> stateManager.update(`${config.app}_func`, undefined));
+  for (const key of watcherKeys) {
+    createWatcher({
+      baseUrl,
+      key,
+      stateManager,
+    });
+  }
 }
 
 export default watcherFiles;

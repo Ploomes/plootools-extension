@@ -1,5 +1,5 @@
-import { MessageOptions, window } from "vscode";
-import { config } from "../config";
+import { MessageOptions, window } from 'vscode';
+import { config } from '../config';
 
 const showMessage = {
   error: (message: string, options?: MessageOptions) => {
@@ -10,7 +10,7 @@ const showMessage = {
   },
   warn: (message: string, options?: MessageOptions) => {
     return window.showWarningMessage(`${config.displayName}: ${message}`, options || {});
-  }
+  },
 };
 
 export default showMessage;

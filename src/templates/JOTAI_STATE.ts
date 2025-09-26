@@ -1,5 +1,10 @@
-import { TCreateContentAux } from "../utils/createContentAux";
-import { generateAtomContent, generateDispatchContent, generateIndexContent, generateStateContent } from "../utils/generators";
+import { TCreateContentAux } from '../utils/createContentAux';
+import {
+  generateAtomContent,
+  generateDispatchContent,
+  generateIndexContent,
+  generateStateContent,
+} from '../utils/generators';
 
 interface IJotaiFile {
   name: string;
@@ -9,20 +14,20 @@ interface IJotaiFile {
 const JOTAI_STATE: Record<string, IJotaiFile> = {
   index: {
     name: 'index.ts',
-    content: generateIndexContent
+    content: generateIndexContent,
   },
   atom: {
     name: 'atom.ts',
-    content: generateAtomContent
+    content: generateAtomContent,
   },
   dispatch: {
     name: 'dispatch.ts',
-    content: generateDispatchContent
+    content: generateDispatchContent,
   },
   state: {
-    name: "state.ts",
-    content: generateStateContent
-  }
+    name: 'state.ts',
+    content: generateStateContent,
+  },
 };
 
 export default JOTAI_STATE;

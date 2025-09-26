@@ -1,5 +1,3 @@
-import config from "./config";
+import config from './config';
 
-export {
-  config
-};
+export { config };

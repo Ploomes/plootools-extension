@@ -1,6 +1,7 @@
-import { camelCase } from "lodash";
-import toPascalCase from "./toPascalCase";
-import { format, Options } from "prettier";
+import { camelCase } from 'lodash';
+import toPascalCase from './toPascalCase';
+import type { Options } from 'prettier';
+import prettifyTemplate from './prettifyTemplate';
 
 export interface IBuildTemplate {
   template: string;
@@ -10,10 +11,13 @@ export interface IBuildTemplate {
   prettier?: {
     active?: boolean;
     options?: Options;
-  }
+  };
 }
 
-function buildTemplate(props: IBuildTemplate) {
+async function buildTemplate(
+  props: IBuildTemplate,
+): Promise<{ template: string; fileName: string }> {
+  const fileIsTs = /\.(tsx?)$/.test(props.fileName);
   const {
     folderName,
     template,
@@ -22,27 +26,29 @@ function buildTemplate(props: IBuildTemplate) {
     prettier = {
       active: true,
       options: {
-        semi: true,
-        trailingComma: "all",
-        tabWidth: 2,
-        singleQuote: true,
         jsxSingleQuote: true,
-        bracketSpacing: true,
-        parser: fileName.endsWith('.ts') ? 'babel-ts' : 'babel'
-      }
-    }
+        parser: fileIsTs ? 'babel-ts' : 'babel',
+      },
+    },
   } = props;
-  const matchTemplateVars = /\@(.*?)\@/g;
+  const matchTemplateVars = /@(.*?)@/g;
   const replacer = mapVariables(folderName, fileName, functionName);
-  const replacerTemplate = template.replace(matchTemplateVars, replacer);
+  const replacedTemplate = template.replace(matchTemplateVars, replacer);
+  const replacedFileName = fileName.replace(matchTemplateVars, replacer);
 
-  const prettierTemplate = format(replacerTemplate, prettier.options);
+  if (prettier.active) {
+    const prettierTemplate = await prettifyTemplate(replacedTemplate, prettier.options);
+    return {
+      template: prettierTemplate,
+      fileName: replacedFileName,
+    };
+  }
 
   return {
-    template: prettier.active ? prettierTemplate : replacerTemplate,
-    fileName: fileName.replace(matchTemplateVars, replacer)
+    template: replacedTemplate,
+    fileName: replacedFileName,
   };
-};
+}
 
 function mapVariables(folderName: string, fileName: string, functionName: string) {
   const vars = new Map();
@@ -53,18 +59,18 @@ function mapVariables(folderName: string, fileName: string, functionName: string
   const fileNamePascalCase = toPascalCase(fileName);
 
   vars.set('folderName', folderName);
-  vars.set("folderName(pascal-case)", folderNamePascalCase);
-  vars.set("folderName(camel-case)", folderNameCamelCase);
+  vars.set('folderName(pascal-case)', folderNamePascalCase);
+  vars.set('folderName(camel-case)', folderNameCamelCase);
 
   vars.set('fileName', fileName);
-  vars.set("fileName(pascal-case)", fileNamePascalCase);
-  vars.set("fileName(camel-case)", fileNameCamelCase);
+  vars.set('fileName(pascal-case)', fileNamePascalCase);
+  vars.set('fileName(camel-case)', fileNameCamelCase);
 
   vars.set('functionName', functionName);
 
   return (match: string, offset: string): string => {
     const value = vars.get(offset);
-    return value || "KeyNameNotFound";
+    return value || 'KeyNameNotFound';
   };
 }
 

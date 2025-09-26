@@ -6,6 +6,6 @@ function generateNames(folderName: string, useAtomFamily: boolean) {
   const state = `use@${folderName}(pascal-case)@State`;
 
   return { atom, atomInterface, dispatch, state };
-};
+}
 
 export default generateNames;

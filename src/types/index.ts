@@ -1,9 +1,5 @@
 import ICallbackCommand from './ICallbackCommand';
-import TTemplates from './TTemplates';
+import TTemplate from './TTemplate';
 import IMultiSelectMenu from './IMultiSelectMenu';
 
-export type {
-  ICallbackCommand,
-  TTemplates,
-  IMultiSelectMenu
-};
+export type { ICallbackCommand, TTemplate, IMultiSelectMenu };

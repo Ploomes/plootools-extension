@@ -19,7 +19,7 @@ enum MENU_OPTIONS {
   JOTAI_STATE_WITH_ATOM_FAMILY = 13,
 
   // ICONS
-  INSERT_ICONS = 14
-};
+  INSERT_ICONS = 14,
+}
 
 export default MENU_OPTIONS;

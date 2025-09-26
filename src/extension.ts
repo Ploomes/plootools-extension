@@ -10,15 +10,19 @@ import { config } from './config';
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export async function activate(context: ExtensionContext) {
-	context.subscriptions.push(commands.registerCommand(`${config.app}.menu`, createMenu, context));
-	context.subscriptions.push(commands.registerCommand(`${config.app}.init`, init, context));
+  context.subscriptions.push(commands.registerCommand(`${config.app}.menu`, createMenu, context));
+  context.subscriptions.push(commands.registerCommand(`${config.app}.init`, init, context));
 
-	if(workspace.workspaceFolders) {
+  if (workspace.workspaceFolders) {
     const { workspaceFolders } = workspace;
-    const baseUrl = resolve( workspaceFolders[0].uri.fsPath, config.folderNameSettings);
-    if(existsSync(baseUrl)) watcherFiles(baseUrl, context);
-	}
+    const baseUrl = resolve(workspaceFolders[0].uri.fsPath, config.folderNameSettings);
+    if (existsSync(baseUrl)) {
+      watcherFiles(baseUrl, context);
+    }
+  }
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() {
+  console.debug('extension deactivated');
+}

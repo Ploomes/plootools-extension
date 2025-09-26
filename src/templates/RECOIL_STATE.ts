@@ -10,7 +10,7 @@ const RECOIL_STATE = {
       use@folderName(pascal-case)@Dispatch,
       use@folderName(pascal-case)@State
     };
-    `
+    `,
   },
   atom: {
     name: 'atom.ts',
@@ -23,7 +23,7 @@ const RECOIL_STATE = {
       });
 
       export default @folderName(camel-case)@Atom;
-    `
+    `,
   },
   dispatch: {
     name: 'dispatch.ts',
@@ -33,7 +33,7 @@ const RECOIL_STATE = {
 
       const use@folderName(pascal-case)@Dispatch = () => useSetRecoilState(@folderName(camel-case)@Atom);
       export default use@folderName(pascal-case)@Dispatch;
-    `
+    `,
   },
   getState: {
     name: 'getState.ts',
@@ -48,7 +48,7 @@ const RECOIL_STATE = {
       }
 
       export default useGet@folderName(pascal-case)@State;
-    `
+    `,
   },
   state: {
     name: 'state.ts',
@@ -58,8 +58,8 @@ const RECOIL_STATE = {
 
     const use@folderName(pascal-case)@ = () => useRecoilState(@folderName(camel-case)@Atom);
     export default use@folderName(pascal-case)@;
-    `
-  }
+    `,
+  },
 };
 
 export default RECOIL_STATE;

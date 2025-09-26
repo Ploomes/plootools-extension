@@ -1,6 +1,6 @@
-import { ExtensionContext } from "vscode";
-import { MENU_OPTIONS } from "../constants";
-import IMultiSelectMenu from "./IMultiSelectMenu";
+import { ExtensionContext } from 'vscode';
+import { MENU_OPTIONS } from '../constants';
+import IMultiSelectMenu from './IMultiSelectMenu';
 
 interface ICallbackCommand {
   fsPath: string;
@@ -8,7 +8,7 @@ interface ICallbackCommand {
   action?: MENU_OPTIONS;
   fileName?: string;
   extensionName?: string;
-  context?: ExtensionContext
+  context?: ExtensionContext;
   selectedMultiOptions?: IMultiSelectMenu[];
 }
 
