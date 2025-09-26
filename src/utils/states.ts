@@ -1,8 +1,8 @@
-import { ExtensionContext } from "vscode";
+import { ExtensionContext } from 'vscode';
 
 function states(context: ExtensionContext) {
   return {
-    get(key: string){
+    get(key: string) {
       return context.workspaceState.get(key);
     },
     update(key: string, state?: string) {
@@ -10,8 +10,8 @@ function states(context: ExtensionContext) {
     },
     create(key: string, state?: string) {
       return this.update(key, state);
-    }
-  }
-};
+    },
+  };
+}
 
 export default states;

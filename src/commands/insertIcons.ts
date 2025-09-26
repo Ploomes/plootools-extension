@@ -2,8 +2,8 @@ import { INSERT_ICONS } from '../templates';
 import { ICallbackCommand } from '../types';
 import { readdirSync, readFileSync, writeFileSync } from 'fs';
 import { basename, join } from 'path';
-import { format } from 'prettier';
 import resolve from 'resolve';
+import { prettifyTemplate } from '../utils';
 import { window } from 'vscode';
 
 // Finds the last import statement and extracts the "from" path
@@ -29,29 +29,36 @@ function insertIconInExportArray(code: string, iconName: string): string {
 
   return code.replace(arrayRegex, (_, start, content, end) => {
     const trimmed: string = content.trim();
-    const icons = trimmed ? trimmed.split(',').map(s => s.trim()) : [];
+    const icons = trimmed ? trimmed.split(',').map((s) => s.trim()) : [];
 
-    if (icons.includes(iconName)) return `${start}${content}${end}`;
+    if (icons.includes(iconName)) {
+      return `${start}${content}${end}`;
+    }
 
-    const newContent = trimmed && !trimmed.endsWith(',') ? `${content}, ${iconName}` : `${content}${iconName}`;
+    const newContent =
+      trimmed && !trimmed.endsWith(',') ? `${content}, ${iconName}` : `${content}${iconName}`;
     return `${start}${newContent}${end}`;
   });
 }
 
 // Main function that inserts the icon import and updates the export array
-function insertIcons(props: ICallbackCommand & { iconName: string }) {
+async function insertIcons(props: ICallbackCommand & { iconName: string }) {
   const { path, iconName } = props;
-  const files = readdirSync(path).map(name => join(path, name));
+  const files = readdirSync(path).map((name) => join(path, name));
 
   for (const file of files) {
     const rawData = readFileSync(file, 'utf8');
     const lines = rawData.split('\n');
 
     const { line: lastImportLine, fromPath } = getLastImportInfo(lines);
-    if (!fromPath) continue;
+    if (!fromPath) {
+      continue;
+    }
 
-    const matchedLibrary = INSERT_ICONS.LIBRARIES_NAME.find(lib => fromPath.includes(lib));
-    if (!matchedLibrary) continue;
+    const matchedLibrary = INSERT_ICONS.LIBRARIES_NAME.find((lib) => fromPath.includes(lib));
+    if (!matchedLibrary) {
+      continue;
+    }
 
     const importPath = `${matchedLibrary}/${iconName}`;
 
@@ -67,7 +74,9 @@ function insertIcons(props: ICallbackCommand & { iconName: string }) {
     const newImportStatement = buildNewImport(iconName, matchedLibrary);
 
     // Avoid inserting duplicate imports
-    if (lines.includes(newImportStatement)) continue;
+    if (lines.includes(newImportStatement)) {
+      continue;
+    }
 
     // Insert the import after the last existing import
     lines.splice(lastImportLine + 1, 0, newImportStatement);
@@ -76,9 +85,7 @@ function insertIcons(props: ICallbackCommand & { iconName: string }) {
     const updatedCode = insertIconInExportArray(lines.join('\n'), iconName);
 
     // Format the final code using Prettier
-    const formatted = format(updatedCode, {
-      semi: true,
-      tabWidth: 2,
+    const formatted = await prettifyTemplate(updatedCode, {
       quoteProps: 'preserve',
     });
 

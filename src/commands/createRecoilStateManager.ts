@@ -1,25 +1,26 @@
-import { window } from "vscode";
-import { MENU_OPTIONS } from "../constants";
-import { ICallbackCommand } from "types";
-import { createFilesAndFolder, showMessage } from "../utils";
-import { RECOIL_STATE } from "../templates";
-import { basename, resolve } from "path";
-
+import { window } from 'vscode';
+import { MENU_OPTIONS } from '../constants';
+import { ICallbackCommand } from 'types';
+import { createFilesAndFolder, showMessage } from '../utils';
+import { RECOIL_STATE } from '../templates';
+import { basename, resolve } from 'path';
 
 async function createRecoilStateManager(props: ICallbackCommand) {
   const isCreateFilesOnly = props.action === MENU_OPTIONS.RECOIL_STATE_FOLDER_AND_FILES_ONLY;
   let folderName: string;
 
-  if(props.action === MENU_OPTIONS.RECOIL_STATE_FOLDER_AND_FILES) {
-    folderName = await window.showInputBox({
-      title: "Enter the folder name",
-      placeHolder: "Ex: name-component",
-    }) as string;
+  if (props.action === MENU_OPTIONS.RECOIL_STATE_FOLDER_AND_FILES) {
+    const enteredFolderName = await window.showInputBox({
+      title: 'Enter the folder name',
+      placeHolder: 'Ex: name-component',
+    });
+    folderName = (enteredFolderName || '').trim().toLowerCase();
+
     const regKebabCase = /^([a-z][a-z0-9]*)(-[a-z0-9]+)*$/g;
-    if(!folderName || !regKebabCase.test(folderName)) {
+    if (!folderName || !regKebabCase.test(folderName)) {
       return showMessage.error('Invalid format!');
     }
-  }else {
+  } else {
     folderName = basename(resolve(props.path));
   }
   return createFilesAndFolder({
@@ -29,11 +30,13 @@ async function createRecoilStateManager(props: ICallbackCommand) {
     isCreateFilesOnly,
     keyOnWorkspace: 'recoil',
     formats: {
-      folderName: 'CAMEL'
+      folderName: 'CAMEL',
+    },
+  }).then(() => {
+    if (isCreateFilesOnly) {
+      showMessage.info('Files created successfully!');
     }
-  }).then(()=> {
-    if(isCreateFilesOnly) showMessage.info('Files created successfully!')
   });
-};
+}
 
 export default createRecoilStateManager;

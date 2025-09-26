@@ -1,93 +1,127 @@
-import { Uri } from "vscode";
-import { ICallbackCommand } from "../types";
-import { existsSync, readFile, writeFileSync } from "fs";
-import { resolve, basename } from "path";
-import { FUNC } from "../templates";
-import { buildTemplate, createFile, createTestFile, showMessage } from "../utils";
-import { config } from "../config";
-import { format } from "prettier";
+import { Uri } from 'vscode';
+import { ICallbackCommand } from '../types';
+import { existsSync } from 'fs';
+import { readFile, writeFile } from 'fs/promises';
+import { resolve, basename } from 'path';
+import { FUNC } from '../templates';
+import { buildTemplate, createFile, createTestFile, prettifyTemplate, showMessage } from '../utils';
+import { config } from '../config';
 
-async function createFuncAndTest(props: ICallbackCommand){
-  const {
+async function maybeCreateIndexFile({
+  extensionName,
+  targetPath,
+  configTemplate,
+}: {
+  extensionName: string;
+  folderName: string;
+  targetPath: string;
+  configTemplate?: { createIndex: boolean; templateIndex: string };
+}) {
+  if (!configTemplate) {
+    return;
+  }
+
+  const indexFilePath = resolve(targetPath, `index.${extensionName}`);
+  const notExistIndexFile = !existsSync(indexFilePath);
+
+  if (configTemplate.createIndex && configTemplate.templateIndex && notExistIndexFile) {
+    const formatted = await prettifyTemplate(configTemplate.templateIndex, {
+      parser: extensionName.endsWith('ts') ? 'babel-ts' : 'babel',
+    });
+    await createFile(indexFilePath, formatted);
+  }
+}
+
+async function updateIndexFile({
+  extensionName,
+  targetPath,
+  fileName,
+  folderName,
+}: {
+  extensionName: string;
+  targetPath: string;
+  fileName: string;
+  folderName: string;
+}) {
+  const indexFilePath = resolve(targetPath, `index.${extensionName}`);
+  if (!existsSync(indexFilePath)) {
+    return;
+  }
+
+  const fileData = await readFile(indexFilePath, 'utf-8');
+  const newTemplate = `
+    import ${fileName} from "./${fileName}";
+    ${fileData.replace(/export(\s|){/g, (match) => `${match} ${fileName},`)}
+  `;
+  const { template: templateIndex } = await buildTemplate({
     fileName,
-    extensionName,
-    context
-  } = props;
+    folderName,
+    template: newTemplate,
+  });
+
+  await writeFile(indexFilePath, templateIndex, { encoding: 'utf-8' });
+}
+
+async function createFuncAndTest(props: ICallbackCommand) {
+  const { fileName, extensionName, context, path: rawPath } = props;
 
   try {
-    if(!fileName || !extensionName) {
-      throw new Error();
+    if (!fileName || !extensionName) {
+      throw new Error('Missing fileName or extensionName');
     }
 
-    const path = Uri.parse(props.path).fsPath;
-    const file = `${fileName}.${extensionName}`;
-    const checkFileExist = existsSync(resolve(path, file));
+    const targetPath = Uri.parse(rawPath).fsPath;
+    const fileNameWithExtensionType = `${fileName}.${extensionName}`;
+    const filePath = resolve(targetPath, fileNameWithExtensionType);
 
-    if(checkFileExist) {
-      return showMessage.error(`File with name ${fileName} already exists!`);
+    if (existsSync(filePath)) {
+      return showMessage.error(`File "${fileName}" already exists!`);
     }
-    
-    const stateFunc = context?.workspaceState.get(`${config.app}_func`) as string;
-    const func = stateFunc ? eval(stateFunc) : FUNC;
-    const currentTemplate = func[extensionName];
-    const configTemplate = currentTemplate?.config;
-    const folderName = basename(path);
 
-    const { template } = buildTemplate({
-      fileName: '',
+    // Template: from workspace state or default FUNC
+    const stateFunc = context?.workspaceState.get<string>(`${config.app}_func`);
+    const funcTemplates = stateFunc ? eval(stateFunc) : FUNC;
+    const currentTemplate = funcTemplates[extensionName];
+    const folderName = basename(targetPath);
+
+    // Build main file template
+    const { template } = await buildTemplate({
+      fileName: fileNameWithExtensionType,
       folderName,
       template: currentTemplate.content,
-      functionName: fileName
+      functionName: fileName,
     });
 
-    await createFile(`${props.path}/${file}`, template);
+    await createFile(filePath, template);
+    // Maybe create index file
+    await maybeCreateIndexFile({
+      extensionName,
+      folderName,
+      targetPath,
+      configTemplate: currentTemplate?.config,
+    });
 
-    if(configTemplate) {
-      const { createIndex, templateIndex } = configTemplate;
-      const notExistIndexFile = !existsSync(resolve(path, `index.${extensionName}`));
-      if(createIndex && templateIndex && notExistIndexFile) {
-        const templateIndex = format(configTemplate.templateIndex, {
-          semi: true,
-          trailingComma: "all",
-          tabWidth: 2,
-        });
-        await createFile(`${props.path}/index.${extensionName}`, templateIndex);
-      }
-    }
+    // Update index with new file
+    await updateIndexFile({
+      extensionName,
+      folderName,
+      targetPath,
+      fileName,
+    });
 
-    if(existsSync(resolve(path, `index.${extensionName}`))) {
-      const currentFile = `index.${extensionName}`;
-      readFile(resolve(path, currentFile), 'utf-8', (err, data) => {
-        if(err) {
-          throw new Error();
-        }
-        const newTemplate = `
-        import ${fileName} from "./${fileName}";
-        ${data.replace(/export(\s|){/g, (match) => {
-          return `${match} ${fileName},`;
-        })}
-        `;
-
-        const { template: templateIndex } = buildTemplate({
-          fileName,
-          folderName,
-          template: newTemplate
-        });
-
-        writeFileSync(resolve(path, currentFile), templateIndex, { encoding: 'utf-8' });
-      });
-    }
+    // Create test file
+    await createTestFile({
+      ...props,
+      baseUrl: targetPath,
+      fileName,
+      pathVscode: rawPath,
+    });
 
     showMessage.info('File created successfully!');
-    createTestFile({
-      ...props,
-      baseUrl: path,
-      fileName,
-      pathVscode: props.path
-    });
-  } catch (err) {
-    showMessage.error('Could not create the files!');
+  } catch (err: any) {
+    console.log(err);
+    showMessage.error(`Could not create the files! ${err.message ?? ''}`);
   }
-};
+}
 
 export default createFuncAndTest;

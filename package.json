@@ -84,10 +84,12 @@
     "compile": "npm run clean && tsc -p ./ && npm run copy:files",
     "watch": "npm run clean && npm run copy:files && tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
-    "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",
     "copy:files": "node ./cp.js",
-    "clean": "rm -rf out"
+    "clean": "rm -rf out",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "format": "prettier --write ."
   },
   "devDependencies": {
     "@types/glob": "^7.2.0",
@@ -97,12 +99,15 @@
     "@types/prettier": "^2.7.1",
     "@types/resolve": "^1.20.6",
     "@types/vscode": "^1.72.0",
-    "@typescript-eslint/eslint-plugin": "^5.31.0",
-    "@typescript-eslint/parser": "^5.31.0",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
     "@vscode/test-electron": "^2.1.5",
-    "eslint": "^8.20.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
     "glob": "^8.0.3",
     "mocha": "^10.0.0",
+    "prettier": "^3.6.2",
     "tsc-alias": "^1.8.2",
     "typescript": "^4.7.4"
   },
@@ -110,7 +115,6 @@
     "fs": "0.0.1-security",
     "lodash": "^4.17.21",
     "path": "^0.12.7",
-    "prettier": "^2.7.1",
     "resolve": "^1.22.10"
   }
 }

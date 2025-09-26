@@ -7,7 +7,7 @@ const JEST = {
       expect(@fileName@()).toEqual();
     });
   });
-  `
+  `,
 };
 
 export default JEST;

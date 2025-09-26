@@ -6,12 +6,12 @@ const FUNC = {
     };
 
     export default @functionName@;
-    `
+    `,
   },
   ts: {
     config: {
       createIndex: true,
-      templateIndex: `export {};`
+      templateIndex: `export {};`,
     },
     content: `interface IProps {};
 
@@ -19,8 +19,8 @@ const FUNC = {
     };
     
     export default @functionName@;
-    `
-  }
+    `,
+  },
 };
 
 export default FUNC;

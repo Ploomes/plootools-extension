@@ -1,12 +1,12 @@
-import createContentAux, { TCreateContentAux } from "../../createContentAux";
-import generateNames from "./generateNames";
+import createContentAux, { TCreateContentAux } from '../../createContentAux';
+import generateNames from './generateNames';
 
 function generateAtomContent(props: TCreateContentAux) {
   const { useAtomFamily = false, useReset = false } = props;
   const typeAtom = useReset ? 'atomWithReset' : 'atom';
-  const utilsImport = createContentAux("jotai")({ useAtomFamily, useReset });
+  const utilsImport = createContentAux('jotai')({ useAtomFamily, useReset });
 
-  const { atom, atomInterface } = generateNames("folderName", useAtomFamily);
+  const { atom, atomInterface } = generateNames('folderName', useAtomFamily);
 
   const atomCode = useAtomFamily
     ? `atomFamily((value: string) => ${typeAtom}<${atomInterface}>({ value }));`
@@ -14,10 +14,7 @@ function generateAtomContent(props: TCreateContentAux) {
 
   const atomImport = useReset ? '' : "import { atom } from 'jotai';";
 
-  const imports = [
-    atomImport,
-    utilsImport
-  ].filter(Boolean).join('\n');
+  const imports = [atomImport, utilsImport].filter(Boolean).join('\n');
 
   return String.raw`
     ${imports}
@@ -30,6 +27,6 @@ function generateAtomContent(props: TCreateContentAux) {
 
     export default ${atom};
   `;
-};
+}
 
 export default generateAtomContent;

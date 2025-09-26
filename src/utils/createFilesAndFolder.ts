@@ -1,26 +1,26 @@
-import { Uri } from "vscode";
-import toPascalCase from "./toPascalCase";
-import { ICallbackCommand, TTemplates } from "types";
-import { resolve } from "path";
-import { existsSync } from "fs";
-import showMessage from "./showMessage";
-import createDirectory from "./createDirectory";
-import { config } from "../config";
-import buildTemplate, { IBuildTemplate } from "./buildTemplate";
-import createFile from "./createFile";
+import { Uri } from 'vscode';
+import toPascalCase from './toPascalCase';
+import { ICallbackCommand, TTemplate } from 'types';
+import { resolve } from 'path';
+import { existsSync } from 'fs';
+import showMessage from './showMessage';
+import createDirectory from './createDirectory';
+import { config } from '../config';
+import buildTemplate, { IBuildTemplate } from './buildTemplate';
+import createFile from './createFile';
 import camelCase from 'lodash/camelCase';
 
-type TTypeFormatString = "CAMEL" | "PASCAL";
+type TTypeFormatString = 'CAMEL' | 'PASCAL';
 
 interface ICreateFilesAndFolder extends ICallbackCommand {
   folderName: string;
   isCreateFilesOnly: boolean;
   keyOnWorkspace: string;
-  defaultTemplate: TTemplates;
+  defaultTemplate: TTemplate;
   formats?: {
     folderName?: TTypeFormatString;
     fileName?: TTypeFormatString;
-  }
+  };
 }
 
 async function createFilesAndFolder(props: ICreateFilesAndFolder) {
@@ -32,16 +32,16 @@ async function createFilesAndFolder(props: ICreateFilesAndFolder) {
     keyOnWorkspace,
     defaultTemplate,
     formats = {
-      folderName: 'PASCAL'
-    }
+      folderName: 'PASCAL',
+    },
   } = props;
 
   try {
     const getPath = Uri.parse(path).fsPath;
     let formatedFolderName = '';
 
-    switch(formats.folderName) {
-      case "CAMEL":
+    switch (formats.folderName) {
+      case 'CAMEL':
         formatedFolderName = camelCase(folderName);
         break;
       default:
@@ -51,57 +51,56 @@ async function createFilesAndFolder(props: ICreateFilesAndFolder) {
 
     let dir = getPath;
     const pathToCreateFiles = isCreateFilesOnly ? path : `${path}/${formatedFolderName}`;
-    if(isCreateFilesOnly) {
+    if (isCreateFilesOnly) {
       dir = resolve(getPath);
-    }else {
+    } else {
       dir = resolve(`${getPath}/${formatedFolderName}`);
     }
 
-    if(!isCreateFilesOnly) {
-      if(existsSync(dir)) {
+    if (!isCreateFilesOnly) {
+      if (existsSync(dir)) {
         return showMessage.error('Folder already exists!');
       }
       await createDirectory(`${path}/${formatedFolderName}`);
     }
 
-    const currentStateWorkspace = context?.workspaceState.get(`${config.app}_${keyOnWorkspace}`) as string;
+    const currentStateWorkspace = context?.workspaceState.get(
+      `${config.app}_${keyOnWorkspace}`,
+    ) as string;
     const currentTemplates = currentStateWorkspace ? eval(currentStateWorkspace) : defaultTemplate;
     const promises = [];
 
-    for(const keyFile in currentTemplates) {
+    for (const keyFile in currentTemplates) {
       const key = keyFile as keyof typeof currentTemplates;
       const file = currentTemplates[key] as { [K in string]: string };
 
       const optionsTemplate: IBuildTemplate = {
         folderName,
         template: file.content,
-        fileName: file.name
+        fileName: file.name,
       };
 
-      if(file.prettier) {
+      if (file.prettier) {
         optionsTemplate['prettier'] = file.prettier as IBuildTemplate['prettier'];
       }
 
-      const { fileName, template } = buildTemplate(optionsTemplate);
-      if(!existsSync(resolve(`${dir}/${fileName}`))) {
-        const create = createFile(
-          `${pathToCreateFiles}/${fileName}`,
-          template
-        );
+      const { fileName, template } = await buildTemplate(optionsTemplate);
+      if (!existsSync(resolve(`${dir}/${fileName}`))) {
+        const create = createFile(`${pathToCreateFiles}/${fileName}`, template);
         promises.push(create);
-      } 
+      }
     }
-    return await Promise.all(promises).then(()=>{
-      return showMessage.info('Successfully created files!');
-    })
-    .catch((error)=> {
-      throw new Error(error);
-    });
+    return await Promise.all(promises)
+      .then(() => {
+        return showMessage.info('Successfully created files!');
+      })
+      .catch((error) => {
+        throw new Error(error);
+      });
   } catch (error) {
     console.log(error);
     return showMessage.error('The folder and files could not be created!');
   }
 }
-
 
 export default createFilesAndFolder;

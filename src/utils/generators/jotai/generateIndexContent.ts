@@ -3,7 +3,7 @@ import generateNames from './generateNames';
 
 function generateIndexContent(props: TCreateContentAux) {
   const { useAtomFamily = false } = props;
-  const { atom, dispatch, state } = generateNames("folderName", useAtomFamily);
+  const { atom, dispatch, state } = generateNames('folderName', useAtomFamily);
 
   return String.raw`
     import ${atom} from "./atom";
@@ -16,6 +16,6 @@ function generateIndexContent(props: TCreateContentAux) {
       ${state}
     };
   `;
-};
+}
 
 export default generateIndexContent;

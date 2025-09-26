@@ -1,29 +1,33 @@
-type TTypeCreate = "jotai"
+type TTypeCreate = 'jotai';
 
-export type TCreateContentAux = TTypeCreate extends "jotai" ? { useAtomFamily?: boolean; useReset?: boolean, typeHookReset?: "atomWithReset" |"useResetAtom" } : {};
+export type TCreateContentAux = TTypeCreate extends 'jotai'
+  ? {
+      useAtomFamily?: boolean;
+      useReset?: boolean;
+      typeHookReset?: 'atomWithReset' | 'useResetAtom';
+    }
+  : Record<string, never>;
 
 function createContentAux(type: TTypeCreate) {
-  return (props: TCreateContentAux)=> {
+  return (props: TCreateContentAux) => {
     const output: string[] = [];
-    if(type === 'jotai') {
-      const { useAtomFamily, useReset, typeHookReset = "atomWithReset" } = props;
+    if (type === 'jotai') {
+      const { useAtomFamily, useReset, typeHookReset = 'atomWithReset' } = props;
       const useUtils = Boolean(useAtomFamily || useReset);
 
-      if(useUtils) {
+      if (useUtils) {
         const hooks = [];
-        if(useAtomFamily) {
+        if (useAtomFamily) {
           hooks.push('atomFamily');
         }
-        if(useReset) {
+        if (useReset) {
           hooks.push(typeHookReset);
         }
-        output.push(
-          `import {${hooks.join(',')}} from 'jotai/utils';`
-        );
+        output.push(`import {${hooks.join(',')}} from 'jotai/utils';`);
       }
     }
     return output.join('\n');
   };
-};
+}
 
 export default createContentAux;

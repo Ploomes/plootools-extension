@@ -1,9 +1,9 @@
 import { TCreateContentAux } from '../../createContentAux';
 import generateNames from './generateNames';
 
-function generateStateContent (props: TCreateContentAux){
+function generateStateContent(props: TCreateContentAux) {
   const { useAtomFamily = false } = props;
-  const { atom: atomName, state: stateName } = generateNames("folderName", useAtomFamily);
+  const { atom: atomName, state: stateName } = generateNames('folderName', useAtomFamily);
 
   return String.raw`
     import { useAtomValue } from 'jotai';
@@ -15,6 +15,6 @@ function generateStateContent (props: TCreateContentAux){
 
     export default ${stateName};
   `;
-};
+}
 
 export default generateStateContent;
