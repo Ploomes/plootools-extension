@@ -5,26 +5,17 @@ on:
     types: [created]
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
-  deploy:
-    if: >
-      github.event_name == 'workflow_dispatch' ||
-      (github.event.issue.pull_request != null && contains(github.event.comment.body, 'run:publish'))
+  # Manual trigger: publishes straight from main, same as before.
+  deploy-manual:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check commenter has write access
-        if: github.event_name == 'issue_comment'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          PERMISSION=$(gh api repos/${{ github.repository }}/collaborators/${{ github.event.comment.user.login }}/permission --jq .permission)
-          echo "Commenter ${{ github.event.comment.user.login }} has permission: $PERMISSION"
-          if [[ "$PERMISSION" != "admin" && "$PERMISSION" != "write" ]]; then
-            echo "Commenter does not have write access. Aborting."
-            exit 1
-          fi
-
       - name: Checkout
         uses: actions/checkout@v2
         with:
@@ -43,16 +34,12 @@ jobs:
         run: npm i -g @vscode/vsce
 
       - name: Bump version (but don't push yet)
-        id: versioning
         run: |
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
           git config user.name "$GITHUB_ACTOR"
 
           VERSION=$(npm version patch --message "v%s")
-          TAG="v$VERSION"
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "TAG=$TAG" >> $GITHUB_ENV
-          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "TAG=v$VERSION" >> $GITHUB_ENV
 
       - name: Package Extension
         run: vsce package --no-dependencies
@@ -79,3 +66,105 @@ jobs:
           git tag -d ${{ env.TAG }} || true
           git push origin :refs/tags/${{ env.TAG }} || true
           git reset --hard HEAD~1
+
+  # PR comment trigger: only merges the PR into main once the whole
+  # pipeline (package + publish) has completed successfully. The version
+  # bump/tag is committed on main, never on the PR's source branch.
+  deploy-via-pr-comment:
+    if: >
+      github.event_name == 'issue_comment' &&
+      github.event.issue.pull_request != null &&
+      contains(github.event.comment.body, 'run:publish')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check commenter has write access
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PERMISSION=$(gh api repos/${{ github.repository }}/collaborators/${{ github.event.comment.user.login }}/permission --jq .permission)
+          echo "Commenter ${{ github.event.comment.user.login }} has permission: $PERMISSION"
+          if [[ "$PERMISSION" != "admin" && "$PERMISSION" != "write" ]]; then
+            echo "Commenter does not have write access. Aborting."
+            exit 1
+          fi
+
+      - name: Resolve PR branch
+        id: pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BASE=$(gh pr view ${{ github.event.issue.number }} --repo ${{ github.repository }} --json baseRefName -q .baseRefName)
+          if [[ "$BASE" != "main" ]]; then
+            echo "PR #${{ github.event.issue.number }} targets '$BASE', not 'main'. Aborting."
+            exit 1
+          fi
+          HEAD=$(gh pr view ${{ github.event.issue.number }} --repo ${{ github.repository }} --json headRefName -q .headRefName)
+          echo "head=$HEAD" >> $GITHUB_OUTPUT
+
+      - name: Checkout PR branch
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ steps.pr.outputs.head }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.14.0
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install `vsce`
+        run: npm i -g @vscode/vsce
+
+      - name: Bump version for packaging only (not committed)
+        run: npm version patch --no-git-tag-version
+
+      - name: Package Extension
+        run: vsce package --no-dependencies
+
+      - name: Publish Extension to Marketplace
+        id: publish
+        run: |
+          if vsce publish -p "${{ secrets.VSCE_PAT }}"; then
+            echo "published=true" >> $GITHUB_OUTPUT
+          else
+            echo "Publishing failed"
+            echo "published=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      # Everything above must succeed before the PR is allowed to merge.
+      - name: Merge Pull Request into main
+        if: steps.publish.outputs.published == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh pr merge ${{ github.event.issue.number }} --merge --repo ${{ github.repository }}
+
+      - name: Checkout main
+        if: steps.publish.outputs.published == 'true'
+        uses: actions/checkout@v2
+        with:
+          ref: main
+
+      - name: Bump version and tag on main
+        if: steps.publish.outputs.published == 'true'
+        run: |
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git config user.name "$GITHUB_ACTOR"
+
+          VERSION=$(npm version patch --message "v%s")
+          echo "TAG=v$VERSION" >> $GITHUB_ENV
+
+      - name: Push version and tag to main
+        if: steps.publish.outputs.published == 'true'
+        run: git push origin main --follow-tags
+
+      - name: Rollback version and tag (if push to main failed)
+        if: failure() && steps.publish.outputs.published == 'true'
+        run: |
+          echo "Rolling back tag and version"
+          git tag -d ${{ env.TAG }} || true
+          git push origin :refs/tags/${{ env.TAG }} || true
