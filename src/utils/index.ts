@@ -12,6 +12,8 @@ import createFilesAndFolder from './createFilesAndFolder';
 import { showMultiSelectMenu } from './showMultiSelectMenu';
 import createContentAux from './createContentAux';
 import prettifyTemplate from './prettifyTemplate';
+import resolveFolderName from './resolveFolderName';
+import selectFilesToCreate from './selectFilesToCreate';
 
 export {
   prettifyTemplate,
@@ -28,4 +30,6 @@ export {
   createFilesAndFolder,
   showMultiSelectMenu,
   createContentAux,
+  resolveFolderName,
+  selectFilesToCreate,
 };

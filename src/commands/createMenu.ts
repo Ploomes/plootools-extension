@@ -9,6 +9,23 @@ import createRecoilStateManager from './createRecoilStateManager';
 import createJotaiStateManager from './createJotaiStateManager';
 import insertIcons from './insertIcons';
 
+/**
+ * Asks the user whether to create a new folder + files, or add the files to the
+ * current folder only. Shared by the component/recoil/jotai creation flows.
+ */
+async function askCreationType(folderAndFilesId: MENU_OPTIONS, filesOnlyId: MENU_OPTIONS) {
+  return window.showQuickPick([
+    {
+      label: '$(folder-opened) Folder and Files',
+      id: folderAndFilesId,
+    },
+    {
+      label: '$(files) Files only',
+      id: filesOnlyId,
+    },
+  ]);
+}
+
 async function createMenu(this: ExtensionContext, props: ICallbackCommand) {
   const mergedProps = { ...props, context: this };
   const options = MENU_OPTIONS_DISPLAY;
@@ -20,16 +37,10 @@ async function createMenu(this: ExtensionContext, props: ICallbackCommand) {
     try {
       switch (action.id) {
         case MENU_OPTIONS.CREATE_COMPONENT: {
-          const typeCreation = await window.showQuickPick([
-            {
-              label: '$(folder-opened) Folder and Files',
-              id: MENU_OPTIONS.REACT_COMPONENT_FOLDER_AND_FILES,
-            },
-            {
-              label: '$(files) Files only',
-              id: MENU_OPTIONS.REACT_COMPONENT_FILES_ONLY,
-            },
-          ]);
+          const typeCreation = await askCreationType(
+            MENU_OPTIONS.REACT_COMPONENT_FOLDER_AND_FILES,
+            MENU_OPTIONS.REACT_COMPONENT_FILES_ONLY,
+          );
 
           if (typeCreation) {
             await createComponent({ ...mergedProps, action: typeCreation.id });
@@ -79,16 +90,10 @@ async function createMenu(this: ExtensionContext, props: ICallbackCommand) {
           break;
         }
         case MENU_OPTIONS.CREATE_RECOIL_STATE: {
-          const typeCreationState = await window.showQuickPick([
-            {
-              label: '$(folder-opened) Folder and Files',
-              id: MENU_OPTIONS.RECOIL_STATE_FOLDER_AND_FILES,
-            },
-            {
-              label: '$(files) Files only',
-              id: MENU_OPTIONS.RECOIL_STATE_FOLDER_AND_FILES_ONLY,
-            },
-          ]);
+          const typeCreationState = await askCreationType(
+            MENU_OPTIONS.RECOIL_STATE_FOLDER_AND_FILES,
+            MENU_OPTIONS.RECOIL_STATE_FOLDER_AND_FILES_ONLY,
+          );
           if (typeCreationState) {
             await createRecoilStateManager({ ...mergedProps, action: typeCreationState.id });
           } else {
@@ -97,16 +102,10 @@ async function createMenu(this: ExtensionContext, props: ICallbackCommand) {
           break;
         }
         case MENU_OPTIONS.CREATE_JOTAI_STATE: {
-          const typeCreationJotai = await window.showQuickPick([
-            {
-              label: '$(folder-opened) Folder and Files',
-              id: MENU_OPTIONS.JOTAI_STATE_FOLDER_AND_FILES,
-            },
-            {
-              label: '$(files) Files only',
-              id: MENU_OPTIONS.JOTAI_STATE_FOLDER_AND_FILES_ONLY,
-            },
-          ]);
+          const typeCreationJotai = await askCreationType(
+            MENU_OPTIONS.JOTAI_STATE_FOLDER_AND_FILES,
+            MENU_OPTIONS.JOTAI_STATE_FOLDER_AND_FILES_ONLY,
+          );
           if (typeCreationJotai) {
             const selectedMultiOptions = await showMultiSelectMenu([
               {

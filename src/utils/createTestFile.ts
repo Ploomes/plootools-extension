@@ -1,7 +1,7 @@
 import { config } from '../config';
 import { existsSync } from 'fs';
 import { basename, resolve } from 'path';
-import { ICallbackCommand } from 'types';
+import { ICallbackCommand } from '@/types';
 import { JEST } from '../templates';
 import buildTemplate from './buildTemplate';
 import createFile from './createFile';

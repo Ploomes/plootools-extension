@@ -1,16 +1,38 @@
-const RECOIL_STATE = {
+import ITemplateContentContext from '../types/ITemplateContentContext';
+
+interface IRecoilFile {
+  name: string;
+  content: ((ctx: ITemplateContentContext) => string) | string;
+}
+
+function generateIndexContent({ selected }: ITemplateContentContext) {
+  const hasState = selected.has('state');
+  const hasDispatch = selected.has('dispatch');
+  const hasGetState = selected.has('getState');
+
+  const imports = [
+    hasState ? `import use@folderName(pascal-case)@ from "./state";` : '',
+    hasDispatch ? `import use@folderName(pascal-case)@Dispatch from "./dispatch";` : '',
+    hasGetState ? `import use@folderName(pascal-case)@State from "./getState";` : '',
+  ]
+    .filter(Boolean)
+    .join('\n');
+
+  const exportNames = [
+    hasState ? 'use@folderName(pascal-case)@' : '',
+    hasDispatch ? 'use@folderName(pascal-case)@Dispatch' : '',
+    hasGetState ? 'use@folderName(pascal-case)@State' : '',
+  ].filter(Boolean);
+
+  const exportsBlock = exportNames.length ? `export {\n  ${exportNames.join(',\n  ')}\n};` : '';
+
+  return [imports, exportsBlock].filter(Boolean).join('\n\n');
+}
+
+const RECOIL_STATE: Record<string, IRecoilFile> = {
   index: {
     name: 'index.ts',
-    content: `import use@folderName(pascal-case)@ from "./state";
-    import use@folderName(pascal-case)@Dispatch from "./dispatch";
-    import use@folderName(pascal-case)@State from "./getState";
-
-    export {
-      use@folderName(pascal-case)@,
-      use@folderName(pascal-case)@Dispatch,
-      use@folderName(pascal-case)@State
-    };
-    `,
+    content: generateIndexContent,
   },
   atom: {
     name: 'atom.ts',
