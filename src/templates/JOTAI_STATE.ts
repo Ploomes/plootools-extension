@@ -1,4 +1,5 @@
 import { TCreateContentAux } from '../utils/createContentAux';
+import ITemplateContentContext from '../types/ITemplateContentContext';
 import {
   generateAtomContent,
   generateDispatchContent,
@@ -8,7 +9,7 @@ import {
 
 interface IJotaiFile {
   name: string;
-  content: ((props: TCreateContentAux) => string) | string;
+  content: ((props: TCreateContentAux & ITemplateContentContext) => string) | string;
 }
 
 const JOTAI_STATE: Record<string, IJotaiFile> = {

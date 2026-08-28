@@ -7,9 +7,14 @@
     "sourceMap": true,
     "rootDir": "src",
     "strict": true,
-    "baseUrl": "./src",
     "esModuleInterop": true,
-    "typeRoots": ["node_modules/@types", "@types"]
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "typeRoots": ["node_modules/@types", "@types"],
+    "ignoreDeprecations": "6.0"
   },
   "include": ["./src"],
   "exclude": ["node_modules", ".vscode-test"]

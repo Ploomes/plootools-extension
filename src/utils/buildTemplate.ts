@@ -1,4 +1,4 @@
-import { camelCase } from 'lodash';
+import { camelCase, kebabCase } from 'lodash';
 import toPascalCase from './toPascalCase';
 import type { Options } from 'prettier';
 import prettifyTemplate from './prettifyTemplate';
@@ -52,13 +52,16 @@ async function buildTemplate(
 
 function mapVariables(folderName: string, fileName: string, functionName: string) {
   const vars = new Map();
-  const folderNamePascalCase = toPascalCase(folderName);
-  const folderNameCamelCase = camelCase(folderName);
+  // Folder names may arrive in any case (e.g. taken from an existing directory like
+  // "MeuComponent"), but templates expect the raw @folderName@ variable to be kebab-case.
+  const folderNameKebabCase = kebabCase(folderName);
+  const folderNamePascalCase = toPascalCase(folderNameKebabCase);
+  const folderNameCamelCase = camelCase(folderNameKebabCase);
 
   const fileNameCamelCase = camelCase(fileName);
   const fileNamePascalCase = toPascalCase(fileName);
 
-  vars.set('folderName', folderName);
+  vars.set('folderName', folderNameKebabCase);
   vars.set('folderName(pascal-case)', folderNamePascalCase);
   vars.set('folderName(camel-case)', folderNameCamelCase);
 

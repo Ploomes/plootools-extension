@@ -1,4 +1,4 @@
-import { IMultiSelectMenu } from 'types';
+import { IMultiSelectMenu } from '@/types';
 import { window } from 'vscode';
 
 export async function showMultiSelectMenu(options: IMultiSelectMenu[]) {

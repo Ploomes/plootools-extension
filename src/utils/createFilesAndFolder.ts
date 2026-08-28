@@ -1,6 +1,6 @@
 import { Uri } from 'vscode';
 import toPascalCase from './toPascalCase';
-import { ICallbackCommand, TTemplate } from 'types';
+import { ICallbackCommand, TTemplate } from '@/types';
 import { resolve } from 'path';
 import { existsSync } from 'fs';
 import showMessage from './showMessage';
@@ -9,6 +9,7 @@ import { config } from '../config';
 import buildTemplate, { IBuildTemplate } from './buildTemplate';
 import createFile from './createFile';
 import camelCase from 'lodash/camelCase';
+import selectFilesToCreate from './selectFilesToCreate';
 
 type TTypeFormatString = 'CAMEL' | 'PASCAL';
 
@@ -17,6 +18,8 @@ interface ICreateFilesAndFolder extends ICallbackCommand {
   isCreateFilesOnly: boolean;
   keyOnWorkspace: string;
   defaultTemplate: TTemplate;
+  /** Extra data forwarded to a template file's `content` function, alongside `selected`. */
+  contentContext?: Record<string, unknown>;
   formats?: {
     folderName?: TTypeFormatString;
     fileName?: TTypeFormatString;
@@ -31,6 +34,7 @@ async function createFilesAndFolder(props: ICreateFilesAndFolder) {
     isCreateFilesOnly,
     keyOnWorkspace,
     defaultTemplate,
+    contentContext = {},
     formats = {
       folderName: 'PASCAL',
     },
@@ -57,26 +61,50 @@ async function createFilesAndFolder(props: ICreateFilesAndFolder) {
       dir = resolve(`${getPath}/${formatedFolderName}`);
     }
 
-    if (!isCreateFilesOnly) {
-      if (existsSync(dir)) {
-        return showMessage.error('Folder already exists!');
-      }
-      await createDirectory(`${path}/${formatedFolderName}`);
+    if (!isCreateFilesOnly && existsSync(dir)) {
+      return showMessage.error('Folder already exists!');
     }
 
     const currentStateWorkspace = context?.workspaceState.get(
       `${config.app}_${keyOnWorkspace}`,
     ) as string;
     const currentTemplates = currentStateWorkspace ? eval(currentStateWorkspace) : defaultTemplate;
-    const promises = [];
 
-    for (const keyFile in currentTemplates) {
+    const { selectedKeys } = await selectFilesToCreate(
+      currentTemplates as Record<string, { name: string }>,
+      folderName,
+    );
+
+    if (!selectedKeys) {
+      return showMessage.error('Operation Cancelled');
+    }
+    if (selectedKeys.length === 0) {
+      return showMessage.info('No files selected. Nothing to create.');
+    }
+
+    if (!isCreateFilesOnly) {
+      await createDirectory(`${path}/${formatedFolderName}`);
+    }
+
+    const promises = [];
+    const selected = new Set(selectedKeys);
+
+    for (const keyFile of selectedKeys) {
       const key = keyFile as keyof typeof currentTemplates;
-      const file = currentTemplates[key] as { [K in string]: string };
+      const file = currentTemplates[key] as {
+        name: string;
+        content: ((ctx: Record<string, unknown>) => string) | string;
+        prettier?: unknown;
+      };
+
+      const resolvedContent =
+        typeof file.content === 'function'
+          ? file.content({ ...contentContext, selected })
+          : file.content;
 
       const optionsTemplate: IBuildTemplate = {
         folderName,
-        template: file.content,
+        template: resolvedContent,
         fileName: file.name,
       };
 
